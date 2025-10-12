@@ -17,6 +17,7 @@ vim.lsp.enable({
     "svelte",
     "html",
     "cssls",
+    "nil_ls",
     -- "clangd",
 })
 

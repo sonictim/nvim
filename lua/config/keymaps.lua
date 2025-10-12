@@ -66,7 +66,10 @@ vim.keymap.set("n", "<leader>br", ":!cargo run", { desc = "[B]uffer compile [R]u
 vim.keymap.set("n", "<leader>ay", "ggVGy", { desc = "Yank entire buffer" })
 vim.keymap.set("n", "<leader>ap", "ggVGp", { desc = "Paste over entire buffer" })
 vim.keymap.set("n", "<leader>aa", "ggVG", { desc = "Select entire buffer" })
+vim.keymap.set("n", "<leader>a=", "ggVG=", { desc = "Format entire buffer" })
 
+vim.keymap.set("n", "<leader>\\", vim.cmd.vsplit, { desc = "Vertical Split" })
+vim.keymap.set("n", "<leader>-", vim.cmd.split, { desc = "Horizontal Split" })
 --swap Commands and go to next with F/T
 -- vim.keymap.set({ 'n', 'v' }, ';', ':')
 -- vim.keymap.set({ 'n', 'v' }, ':', ';')
