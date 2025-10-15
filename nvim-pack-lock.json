@@ -112,6 +112,10 @@
       "rev": "b4da76b",
       "src": "https://github.com/nvim-telescope/telescope.nvim"
     },
+    "theme-template.nvim": {
+      "rev": "4d15961",
+      "src": "https://github.com/sonictim/theme-template.nvim"
+    },
     "todo-comments.nvim": {
       "rev": "19d461d",
       "src": "https://github.com/folke/todo-comments.nvim"
