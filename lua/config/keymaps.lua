@@ -63,10 +63,10 @@ vim.keymap.set("n", "<leader>bc", ":!sudo rm config.h<CR>:!sudo make clean insta
 vim.keymap.set("n", "<leader>br", ":!cargo run", { desc = "[B]uffer compile [R]ust" })
 
 --Quick All Yank or Replace
-vim.keymap.set("n", "<leader>ay", "ggVGy", { desc = "Yank entire buffer" })
-vim.keymap.set("n", "<leader>ap", "ggVGp", { desc = "Paste over entire buffer" })
-vim.keymap.set("n", "<leader>aa", "ggVG", { desc = "Select entire buffer" })
-vim.keymap.set("n", "<leader>a=", "ggVG=", { desc = "Format entire buffer" })
+vim.keymap.set("n", "<leader>ay", "maggVGy`a", { desc = "Yank entire buffer" })
+vim.keymap.set("n", "<leader>ap", "maggVGp`a", { desc = "Paste over entire buffer" })
+vim.keymap.set("n", "<leader>aa", "maggVG`a", { desc = "Select entire buffer" })
+vim.keymap.set("n", "<leader>a=", "maggVG=`a", { desc = "Format entire buffer" })
 
 vim.keymap.set("n", "<leader>\\", vim.cmd.vsplit, { desc = "Vertical Split" })
 vim.keymap.set("n", "<leader>-", vim.cmd.split, { desc = "Horizontal Split" })
@@ -101,6 +101,7 @@ vim.keymap.set("i", "<C-k>", "<up>", { desc = "Move cursor up" })
 -- vim.keymap.set("n", "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
 -- vim.keymap.set("n", "<C-S-j>", "<C-w>J", { desc = "Move window to the lower" })
 -- vim.keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
+
 
 local transparent = true
 

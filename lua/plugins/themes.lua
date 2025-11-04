@@ -12,6 +12,7 @@ vim.pack.add({
 	"https://github.com/Mofiqul/vscode.nvim",
 	"https://github.com/projekt0n/github-nvim-theme",
 	"https://github.com/sonictim/theme-template.nvim",
+	"https://github.com/datsfilipe/vesper.nvim",
 })
 
 -- Setup all themes for easy switching
@@ -32,7 +33,18 @@ require("nightfox").setup({})
 require("gruvbox").setup({})
 require("dracula").setup({})
 require("rose-pine").setup({})
-
+require('vesper').setup({
+	transparent = false, -- Boolean: Sets the background to transparent
+	italics = {
+		comments = true, -- Boolean: Italicizes comments
+		keywords = false, -- Boolean: Italicizes keywords
+		functions = true, -- Boolean: Italicizes functions
+		strings = true, -- Boolean: Italicizes strings
+		variables = false, -- Boolean: Italicizes variables
+	},
+	overrides = {},   -- A dictionary of group names, can be a function returning a dictionary or a table.
+	palette_overrides = {}
+})
 -- Setup theme-template (will uncomment after download completes)
 -- require("theme-template").setup({})
 
@@ -50,6 +62,7 @@ vim.cmd.colorscheme("tokyonight-night")
 -- vim.cmd.colorscheme("vscode")
 -- vim.cmd.colorscheme("github_dark")
 -- vim.cmd.colorscheme("theme-template")
+-- vim.cmd.colorscheme("vesper")
 
 -- CSS COLORS
 require("nvim-highlight-colors").setup({})
