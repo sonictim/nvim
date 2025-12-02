@@ -114,6 +114,11 @@ function toggle_transparency()
 		vim.api.nvim_set_hl(0, "LineNr", { bg = "none" })
 		vim.api.nvim_set_hl(0, "VertSplit", { bg = "none" })
 	else
+		vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+		vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" })
+		vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
+		vim.api.nvim_set_hl(0, "LineNr", { bg = "none" })
+		vim.api.nvim_set_hl(0, "VertSplit", { bg = "none" })
 		-- reset to colorscheme defaults
 		vim.cmd("highlight clear Normal")
 		vim.cmd("highlight clear NormalNC")
@@ -275,8 +280,8 @@ local function toggle_boolean()
 end
 
 -- Set up the keybinding
-vim.keymap.set("n", "<leader>tb", toggle_boolean, {
-	desc = "[T]oggle closest [B]oolean on current line",
+vim.keymap.set("n", "<leader>b", toggle_boolean, {
+	desc = "Toggle closest [B]oolean on current line",
 	noremap = true,
 	silent = true,
 })
