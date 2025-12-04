@@ -1,8 +1,16 @@
 {
   "plugins": {
+    "LuaSnip": {
+      "rev": "b3104910bb5ebf40492aadffae18f2528fa757d9",
+      "src": "https://github.com/L3MON4D3/LuaSnip"
+    },
     "blink.cmp": {
       "rev": "cc8c9b7",
       "src": "https://github.com/saghen/blink.cmp"
+    },
+    "conform.nvim": {
+      "rev": "b4aab989db276993ea5dcb78872be494ce546521",
+      "src": "https://github.com/stevearc/conform.nvim"
     },
     "dracula.nvim": {
       "rev": "041d923",
@@ -44,9 +52,17 @@
       "rev": "27f1e11",
       "src": "https://github.com/rebelot/kanagawa.nvim"
     },
+    "lazydev.nvim": {
+      "rev": "0c5e67881ddb9c64e04ca5a4cc57b3e4b76c8feb",
+      "src": "https://github.com/folke/lazydev.nvim"
+    },
     "lualine.nvim": {
       "rev": "b8c2315",
       "src": "https://github.com/nvim-lualine/lualine.nvim"
+    },
+    "mason.nvim": {
+      "rev": "7dc4facca9702f95353d5a1f87daf23d78e31c2a",
+      "src": "https://github.com/mason-org/mason.nvim"
     },
     "mini.nvim": {
       "rev": "c38c9f4",
@@ -71,6 +87,14 @@
     "nvim-highlight-colors": {
       "rev": "e0c4a58",
       "src": "https://github.com/brenoprata10/nvim-highlight-colors"
+    },
+    "nvim-lint": {
+      "rev": "0864f81c681e15d9bdc1156fe3a17bd07db5a3ed",
+      "src": "https://github.com/mfussenegger/nvim-lint"
+    },
+    "nvim-lspconfig": {
+      "rev": "d9879110d0422a566fa01d732556f4d5515e1738",
+      "src": "https://github.com/neovim/nvim-lspconfig"
     },
     "nvim-treesitter": {
       "rev": "42fc28ba",

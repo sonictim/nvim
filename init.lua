@@ -1,6 +1,6 @@
+require("config.lsp")
 require("config.autocmds")
 require("config.keymaps")
-require("config.lsp")
 require("config.health")
 
 
@@ -32,7 +32,7 @@ require('plugins.enough-already').setup({
 	placeholder = "⋯", -- or "💬", "// ...", etc.
 	keymap = '<leader>tc'
 })
-require("config.nix")
+-- require("config.nix")
 
 vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
 vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" })

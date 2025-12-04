@@ -18,6 +18,7 @@ vim.lsp.enable({
     "html",
     "cssls",
     "nil_ls",
+    "buf_ls",
     -- "clangd",
 })
 
