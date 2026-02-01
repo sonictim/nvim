@@ -1,3 +1,8 @@
+-- local pkg = require("mason-registry").get_package("nil")
+-- if not pkg:is_installed() then
+-- 	pkg:install()
+-- end
+--
 return {
 	cmd = { "nil" },
 	filetypes = { "nix" },

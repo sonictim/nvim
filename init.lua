@@ -2,6 +2,7 @@ require("config.lsp")
 require("config.autocmds")
 require("config.keymaps")
 require("config.health")
+require("config.neovide")
 
 
 -- Manually require all plugin config files
@@ -22,7 +23,7 @@ require("plugins.quick-install")
 require("plugins.telescope")
 require("plugins.treesitter")
 require("plugins.which-key")
-
+-- require("plugins.ChatGPT")
 -- Run this last to override options set by plugins
 require("config.options")
 

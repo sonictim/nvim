@@ -6,8 +6,7 @@ vim.pack.add({
 -- require("mason").setup()    -- Connects the LSP to the Language servers... trying to remove
 require("fidget").setup({}) -- LSP update info in bottom corner
 
---DONT FORGET TO ADD THE CORRESPONDING .LUA FILES to the LSP directory
-vim.lsp.enable({
+local lsps = {
     "rust_analyzer",
     "lua_ls",
     "bashls",
@@ -19,8 +18,12 @@ vim.lsp.enable({
     "cssls",
     "nil_ls",
     "buf_ls",
-    -- "clangd",
-})
+    "sourcekit",
+    "clangd",
+    "zls",
+}
+--DONT FORGET TO ADD THE CORRESPONDING .LUA FILES to the LSP directory
+vim.lsp.enable(lsps)
 
 -- LSP Configuration - minimal custom mappings
 vim.api.nvim_create_autocmd("LspAttach", {
@@ -92,3 +95,23 @@ vim.api.nvim_create_autocmd("BufWritePre", {
     pattern = "*",
     callback = format_or_fallback,
 })
+
+vim.keymap.set("n", "<leader>lr", function()
+    for _, client in pairs(vim.lsp.get_clients()) do
+        client:stop()
+    end
+    vim.lsp.enable(lsps)
+end, { desc = "[LSP] Restart all servers" })
+
+
+vim.keymap.set("n", "<leader>ls", function()
+    local clients = vim.lsp.get_clients()
+
+    if #clients > 0 then
+        for _, client in pairs(clients) do
+            client:stop()
+        end
+    else
+        vim.lsp.enable(lsps)
+    end
+end, { desc = "[LSP] Toggle start/stop" })
