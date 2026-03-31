@@ -1,6 +1,12 @@
+-- WARNING!  YOU MAY NEED TO MANUALLY SWITCH TO THE MASTER BRANCHES
+-- WARNING!  YOU MAY NEED TO MANUALLY SWITCH TO THE MASTER BRANCHES
+-- WARNING!  YOU MAY NEED TO MANUALLY SWITCH TO THE MASTER BRANCHES
+-- WARNING!  YOU MAY NEED TO MANUALLY SWITCH TO THE MASTER BRANCHES
+
+
 vim.pack.add({
-  { "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
-  { "https://github.com/nvim-treesitter/nvim-treesitter-textobjects", version = "main" },
+  "https://github.com/nvim-treesitter/nvim-treesitter",
+  "https://github.com/nvim-treesitter/nvim-treesitter-textobjects",
   "https://github.com/nvim-treesitter/nvim-treesitter-context",
 })
 
@@ -15,20 +21,20 @@ require('nvim-treesitter').install {
 -- Textobject selection keymaps
 local select = require("nvim-treesitter-textobjects.select")
 local sel_keymaps = {
-  { "af", "@function.outer", "Around function" },
-  { "if", "@function.inner", "Inside function" },
-  { "ac", "@class.outer", "Around class" },
-  { "ic", "@class.inner", "Inside class" },
-  { "aa", "@parameter.outer", "Around argument" },
-  { "ia", "@parameter.inner", "Inside argument" },
+  { "af", "@function.outer",    "Around function" },
+  { "if", "@function.inner",    "Inside function" },
+  { "ac", "@class.outer",       "Around class" },
+  { "ic", "@class.inner",       "Inside class" },
+  { "aa", "@parameter.outer",   "Around argument" },
+  { "ia", "@parameter.inner",   "Inside argument" },
   { "ai", "@conditional.outer", "Around conditional" },
   { "ii", "@conditional.inner", "Inside conditional" },
-  { "al", "@loop.outer", "Around loop" },
-  { "il", "@loop.inner", "Inside loop" },
-  { "ab", "@block.outer", "Around block" },
-  { "ib", "@block.inner", "Inside block" },
-  { "a/", "@comment.outer", "Around comment" },
-  { "i/", "@comment.inner", "Inside comment" },
+  { "al", "@loop.outer",        "Around loop" },
+  { "il", "@loop.inner",        "Inside loop" },
+  { "ab", "@block.outer",       "Around block" },
+  { "ib", "@block.inner",       "Inside block" },
+  { "a/", "@comment.outer",     "Around comment" },
+  { "i/", "@comment.inner",     "Inside comment" },
 }
 
 for _, map in ipairs(sel_keymaps) do
@@ -41,28 +47,32 @@ end
 local move = require("nvim-treesitter-textobjects.move")
 
 local move_keymaps = {
-  { "]f", "@function.outer", "next_start", "Next function start" },
-  { "]F", "@function.outer", "next_end", "Next function end" },
-  { "[f", "@function.outer", "previous_start", "Prev function start" },
-  { "[F", "@function.outer", "previous_end", "Prev function end" },
-  { "]c", "@class.outer", "next_start", "Next class start" },
-  { "]C", "@class.outer", "next_end", "Next class end" },
-  { "[c", "@class.outer", "previous_start", "Prev class start" },
-  { "[C", "@class.outer", "previous_end", "Prev class end" },
-  { "]a", "@parameter.inner", "next_start", "Next argument" },
-  { "]A", "@parameter.inner", "next_end", "Next argument end" },
+  { "]f", "@function.outer",  "next_start",     "Next function start" },
+  { "]F", "@function.outer",  "next_end",       "Next function end" },
+  { "[f", "@function.outer",  "previous_start", "Prev function start" },
+  { "[F", "@function.outer",  "previous_end",   "Prev function end" },
+  { "]c", "@class.outer",     "next_start",     "Next class start" },
+  { "]C", "@class.outer",     "next_end",       "Next class end" },
+  { "[c", "@class.outer",     "previous_start", "Prev class start" },
+  { "[C", "@class.outer",     "previous_end",   "Prev class end" },
+  { "]a", "@parameter.inner", "next_start",     "Next argument" },
+  { "]A", "@parameter.inner", "next_end",       "Next argument end" },
   { "[a", "@parameter.inner", "previous_start", "Prev argument" },
-  { "[A", "@parameter.inner", "previous_end", "Prev argument end" },
-  { "]/", "@comment.outer", "next_start", "Next comment" },
-  { "[/", "@comment.outer", "previous_start", "Prev comment" },
+  { "[A", "@parameter.inner", "previous_end",   "Prev argument end" },
+  { "]/", "@comment.outer",   "next_start",     "Next comment" },
+  { "[/", "@comment.outer",   "previous_start", "Prev comment" },
 }
 
 for _, map in ipairs(move_keymaps) do
   local fn
-  if map[3] == "next_start" then fn = move.goto_next_start
-  elseif map[3] == "next_end" then fn = move.goto_next_end
-  elseif map[3] == "previous_start" then fn = move.goto_previous_start
-  elseif map[3] == "previous_end" then fn = move.goto_previous_end
+  if map[3] == "next_start" then
+    fn = move.goto_next_start
+  elseif map[3] == "next_end" then
+    fn = move.goto_next_end
+  elseif map[3] == "previous_start" then
+    fn = move.goto_previous_start
+  elseif map[3] == "previous_end" then
+    fn = move.goto_previous_end
   end
   vim.keymap.set("n", map[1], function()
     fn(map[2], "textobjects")
