@@ -11,7 +11,8 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 		vim.hl.on_yank()
 	end,
 })
-
+--
+-- Treesitter parser updates handled by :TSUpdate (see treesitter.lua)
 vim.api.nvim_create_user_command("W", "w !sudo tee %", {})
 
 -- Define a proper Lua function to write and source the current file

@@ -103,34 +103,7 @@ vim.keymap.set("i", "<C-k>", "<up>", { desc = "Move cursor up" })
 -- vim.keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
 
 
-local transparent = true
-
-function toggle_transparency()
-	transparent = not transparent
-	if transparent then
-		vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
-		vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" })
-		vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
-		vim.api.nvim_set_hl(0, "LineNr", { bg = "none" })
-		vim.api.nvim_set_hl(0, "VertSplit", { bg = "none" })
-	else
-		vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
-		vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" })
-		vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
-		vim.api.nvim_set_hl(0, "LineNr", { bg = "none" })
-		vim.api.nvim_set_hl(0, "VertSplit", { bg = "none" })
-		-- reset to colorscheme defaults
-		vim.cmd("highlight clear Normal")
-		vim.cmd("highlight clear NormalNC")
-		vim.cmd("highlight clear SignColumn")
-		vim.cmd("highlight clear LineNr")
-		vim.cmd("highlight clear VertSplit")
-		vim.cmd("colorscheme " .. vim.g.colors_name)
-	end
-end
-
--- Example keybinding: <leader>tt
-vim.keymap.set("n", "<leader>ty", toggle_transparency, { desc = "Toggle Transparenc[Y]" })
+vim.keymap.set("n", "<leader>ty", function() _G.toggle_transparency() end, { desc = "Toggle Transparenc[Y]" })
 -- require("plugins.quickfix").setup()
 -- require 'custom.method_browser'
 -- Toggle between cargo check and clippy
@@ -294,3 +267,25 @@ vim.keymap.set("n", "<leader>u", function()
 	vim.cmd("source")
 	vim.pack.update()
 end, { desc = "[U]pdate" })
+
+
+vim.keymap.set("i", "<C-space>", "<C-x><C-o>")
+
+-- tab navigation
+vim.keymap.set("i", "<Tab>", function()
+	return vim.fn.pumvisible() == 1 and "<C-n>" or "<Tab>"
+end, { expr = true })
+
+vim.keymap.set("i", "<S-Tab>", function()
+	return vim.fn.pumvisible() == 1 and "<C-p>" or "<S-Tab>"
+end, { expr = true })
+
+vim.keymap.set("i", "<C-p>", function()
+	if vim.fn.pumvisible() == 1 then
+		-- Menu is open → go to previous item
+		return "<C-p>"
+	else
+		-- Menu not open → insert last normal-mode yank before cursor
+		return "<C-o>p"
+	end
+end, { expr = true, noremap = true })

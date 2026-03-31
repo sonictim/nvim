@@ -1,5 +1,9 @@
 {
   "plugins": {
+    "ChatGPT.nvim": {
+      "rev": "5c54a7e9de67e2f8f8c3ed60f872f4a34a3e65ff",
+      "src": "https://github.com/jackMort/ChatGPT.nvim.git"
+    },
     "LuaSnip": {
       "rev": "b3104910bb5ebf40492aadffae18f2528fa757d9",
       "src": "https://github.com/L3MON4D3/LuaSnip"
@@ -75,6 +79,10 @@
     "nightfox.nvim": {
       "rev": "ba47d4b",
       "src": "https://github.com/EdenEast/nightfox.nvim"
+    },
+    "nui.nvim": {
+      "rev": "de740991c12411b663994b2860f1a4fd0937c130",
+      "src": "https://github.com/MunifTanjim/nui.nvim.git"
     },
     "nvim": {
       "rev": "af58927",

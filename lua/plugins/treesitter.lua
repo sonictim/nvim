@@ -4,111 +4,84 @@ vim.pack.add({
   "https://github.com/nvim-treesitter/nvim-treesitter-context",
 })
 
--- Build treesitter parsers (defer until treesitter is loaded)
-vim.defer_fn(function()
-  if vim.fn.exists(':TSUpdate') == 2 then
-    vim.cmd("TSUpdate")
+-- Parser installation
+require('nvim-treesitter').install {
+  'rust', 'bash', 'c', 'cpp', 'diff', 'html', 'lua', 'luadoc',
+  'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc',
+  'javascript', 'typescript', 'python', 'zig', 'nix', 'svelte',
+  'json', 'toml', 'css',
+}
+
+-- Textobject selection keymaps
+local select = require("nvim-treesitter-textobjects.select")
+local sel_keymaps = {
+  { "af", "@function.outer", "Around function" },
+  { "if", "@function.inner", "Inside function" },
+  { "ac", "@class.outer", "Around class" },
+  { "ic", "@class.inner", "Inside class" },
+  { "aa", "@parameter.outer", "Around argument" },
+  { "ia", "@parameter.inner", "Inside argument" },
+  { "ai", "@conditional.outer", "Around conditional" },
+  { "ii", "@conditional.inner", "Inside conditional" },
+  { "al", "@loop.outer", "Around loop" },
+  { "il", "@loop.inner", "Inside loop" },
+  { "ab", "@block.outer", "Around block" },
+  { "ib", "@block.inner", "Inside block" },
+  { "a/", "@comment.outer", "Around comment" },
+  { "i/", "@comment.inner", "Inside comment" },
+}
+
+for _, map in ipairs(sel_keymaps) do
+  vim.keymap.set({ "x", "o" }, map[1], function()
+    select.select_textobject(map[2], "textobjects")
+  end, { desc = map[3] })
+end
+
+-- Movement keymaps
+local move = require("nvim-treesitter-textobjects.move")
+
+local move_keymaps = {
+  { "]f", "@function.outer", "next_start", "Next function start" },
+  { "]F", "@function.outer", "next_end", "Next function end" },
+  { "[f", "@function.outer", "previous_start", "Prev function start" },
+  { "[F", "@function.outer", "previous_end", "Prev function end" },
+  { "]c", "@class.outer", "next_start", "Next class start" },
+  { "]C", "@class.outer", "next_end", "Next class end" },
+  { "[c", "@class.outer", "previous_start", "Prev class start" },
+  { "[C", "@class.outer", "previous_end", "Prev class end" },
+  { "]a", "@parameter.inner", "next_start", "Next argument" },
+  { "]A", "@parameter.inner", "next_end", "Next argument end" },
+  { "[a", "@parameter.inner", "previous_start", "Prev argument" },
+  { "[A", "@parameter.inner", "previous_end", "Prev argument end" },
+  { "]/", "@comment.outer", "next_start", "Next comment" },
+  { "[/", "@comment.outer", "previous_start", "Prev comment" },
+}
+
+for _, map in ipairs(move_keymaps) do
+  local fn
+  if map[3] == "next_start" then fn = move.goto_next_start
+  elseif map[3] == "next_end" then fn = move.goto_next_end
+  elseif map[3] == "previous_start" then fn = move.goto_previous_start
+  elseif map[3] == "previous_end" then fn = move.goto_previous_end
   end
-end, 1500)
+  vim.keymap.set("n", map[1], function()
+    fn(map[2], "textobjects")
+  end, { desc = map[4] })
+end
 
--- [[ Configure Treesitter ]] See `:help nvim-treesitter`
-require('nvim-treesitter.configs').setup({
-  ensure_installed = { 'rust', 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
-  -- Autoinstall languages that are not installed
-  auto_install = true,
-  highlight = {
-    enable = true,
-    -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
-    --  If you are experiencing weird indenting issues, add the language to
-    --  the list of additional_vim_regex_highlighting and disabled languages for indent.
-    additional_vim_regex_highlighting = { 'ruby' },
-  },
-  indent = { enable = true, disable = { 'ruby' } },
-  textobjects = {
-    select = {
-      enable = true,
-      lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
-      keymaps = {
-        -- Functions
-        ['af'] = '@function.outer',
-        ['if'] = '@function.inner',
-
-        -- Classes
-        ['ac'] = '@class.outer',
-        ['ic'] = '@class.inner',
-
-        -- Parameters/arguments
-        ['aa'] = '@parameter.outer',
-        ['ia'] = '@parameter.inner',
-
-        -- Conditionals
-        ['ai'] = '@conditional.outer',
-        ['ii'] = '@conditional.inner',
-
-        -- Loops
-        ['al'] = '@loop.outer',
-        ['il'] = '@loop.inner',
-
-        -- Blocks
-        ['ab'] = '@block.outer',
-        ['ib'] = '@block.inner',
-
-        -- Comments
-        ['a/'] = '@comment.outer',
-        ['i/'] = '@comment.inner',
-      },
-    },
-    move = {
-      enable = true,
-      set_jumps = true, -- whether to set jumps in the jumplist
-      goto_next_start = {
-        [']f'] = '@function.outer',
-        [']c'] = '@class.outer',
-        [']a'] = '@parameter.inner',
-        [']/'] = '@comment.outer',
-      },
-      goto_next_end = {
-        [']F'] = '@function.outer',
-        [']C'] = '@class.outer',
-        [']A'] = '@parameter.inner',
-      },
-      goto_previous_start = {
-        ['[f'] = '@function.outer',
-        ['[c'] = '@class.outer',
-        ['[a'] = '@parameter.inner',
-        ['[/'] = '@comment.outer',
-      },
-      goto_previous_end = {
-        ['[F'] = '@function.outer',
-        ['[C'] = '@class.outer',
-        ['[A'] = '@parameter.inner',
-      },
-    },
-  },
-})
-
--- There are additional nvim-treesitter modules that you can use to interact
--- with nvim-treesitter. You should go explore a few and see what interests you:
---
---    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
---    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
---    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
-
--- Configure treesitter-context
+-- Treesitter-context
 require('treesitter-context').setup({
-  enable = true,            -- Enable this plugin (Can be enabled/disabled later via commands)
-  multiwindow = false,      -- Enable multiwindow support.
-  max_lines = 0,            -- How many lines the window should span. Values <= 0 mean no limit.
-  min_window_height = 0,    -- minimum editor window height to enable context. values <= 0 mean no limit.
+  enable = true,
+  multiwindow = false,
+  max_lines = 0,
+  min_window_height = 0,
   line_numbers = true,
-  multiline_threshold = 20, -- Maximum number of lines to show for a single context
-  trim_scope = 'inner',     -- Which context lines to discard if `max_lines` is exceeded. Choices: 'inner', 'outer'
-  mode = 'cursor',          -- Line used to calculate context. Choices: 'cursor', 'topline'
-  -- Separator between context and content. Should be a single character string, like '-'.
-  -- When separator is set, the context will only show up when there are at least 2 lines above cursorline.
+  multiline_threshold = 20,
+  trim_scope = 'inner',
+  mode = 'cursor',
   separator = nil,
-  zindex = 20,     -- The Z-index of the context window
-  on_attach = nil, -- (fun(buf: integer): boolean) return false to disable attaching
+  zindex = 20,
+  on_attach = nil,
 })
 
 vim.keymap.set('n', '<leader>c', function()

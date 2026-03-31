@@ -85,12 +85,32 @@ vim.opt.foldlevel = 99
 -- Automatically reload files changed outside vim
 vim.opt.autoread = true
 
--- Set transparency by default
-vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
-vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" })
-vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
-vim.api.nvim_set_hl(0, "LineNr", { bg = "none" })
-vim.api.nvim_set_hl(0, "VertSplit", { bg = "none" })
+-- Transparency toggle (default: on)
+local transparent = true
+
+local function set_transparent()
+	vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+	vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" })
+	vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
+	vim.api.nvim_set_hl(0, "LineNr", { bg = "none" })
+	vim.api.nvim_set_hl(0, "VertSplit", { bg = "none" })
+end
+
+function _G.toggle_transparency()
+	transparent = not transparent
+	if transparent then
+		set_transparent()
+	else
+		vim.cmd("highlight clear Normal")
+		vim.cmd("highlight clear NormalNC")
+		vim.cmd("highlight clear SignColumn")
+		vim.cmd("highlight clear LineNr")
+		vim.cmd("highlight clear VertSplit")
+		vim.cmd("colorscheme " .. vim.g.colors_name)
+	end
+end
+
+set_transparent()
 
 vim.opt.winborder = "rounded"
 

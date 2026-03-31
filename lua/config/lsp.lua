@@ -1,10 +1,5 @@
-vim.pack.add({
-    "https://github.com/j-hui/fidget.nvim",
-    "https://github.com/saghen/blink.cmp",
-    -- "https://github.com/mason-org/mason.nvim",
-})
--- require("mason").setup()    -- Connects the LSP to the Language servers... trying to remove
-require("fidget").setup({}) -- LSP update info in bottom corner
+vim.pack.add({ "https://github.com/j-hui/fidget.nvim" })
+require("fidget").setup({})
 
 local lsps = {
     "rust_analyzer",
