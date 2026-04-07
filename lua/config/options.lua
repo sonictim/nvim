@@ -116,3 +116,7 @@ vim.opt.winborder = "rounded"
 
 vim.opt.autochdir = false
 vim.opt.cmdheight = 0
+
+-- Built-in undotree (Neovim 0.12+)
+vim.cmd.packadd("nvim.undotree")
+vim.keymap.set("n", "<leader>tu", vim.cmd.Undotree, { desc = "[T]oggle [U]ndotree" })
