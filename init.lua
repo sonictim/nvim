@@ -8,6 +8,7 @@ require("config.keymaps")
 
 -- Manually require all plugin config files
 require("plugins.lualine")
+-- require("plugins.statusline")
 require("plugins.themes")
 require("plugins.escape-hatch")
 require("plugins.fugitive")
@@ -24,8 +25,8 @@ require("config.options")
 require("config.neovide")
 
 -- In your config
-require('plugins.enough-already').setup({
-	placeholder = "⋯", -- or "💬", "// ...", etc.
-	keymap = '<leader>tc'
-})
+-- require('plugins.enough-already').setup({
+-- 	placeholder = "⋯", -- or "💬", "// ...", etc.
+-- 	keymap = '<leader>tc'
+-- })
 -- require("config.nix")

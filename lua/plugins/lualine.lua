@@ -8,17 +8,18 @@ require("lualine").setup({
 	-- theme = "tokyonight",
 	sections = {
 		-- lualine_c = {
-		-- 	{
-		-- 		function()
-		-- 			local roto = require("roto-rooter")
-		-- 			return roto.RRget_relative_dir()
-		-- 			-- return vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
-		-- 		end,
-		-- 		icon = "󰉋",
-		-- 	},
+		-- 	-- 	{
+		-- 	-- 		function()
+		-- 	-- 			local roto = require("roto-rooter")
+		-- 	-- 			return roto.RRget_relative_dir()
+		-- 	-- 			-- return vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
+		-- 	-- 		end,
+		-- 	-- 		icon = "󰉋",
+		-- 	-- 	},
 		-- 	"filename",
 		-- 	{
-		-- 		function() return vim.ui.progress_status() end,
+		-- 		function() return vim.lsp.status() end,
+		-- 		color = "DiagnosticWarn",
 		-- 	},
 		-- },
 		lualine_x = {

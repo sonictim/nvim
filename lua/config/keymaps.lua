@@ -289,3 +289,31 @@ vim.keymap.set("i", "<C-p>", function()
 		return "<C-o>p"
 	end
 end, { expr = true, noremap = true })
+
+vim.keymap.set("i", ";", function()
+	local line = vim.api.nvim_get_current_line()
+	local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+	local after_cursor = line:sub(col + 1)
+
+	if after_cursor:match("^[%)%]%}\"'%s]+$") then
+		local trimmed = line:match("^(.-)%s*$")
+		vim.api.nvim_set_current_line(trimmed .. ";")
+		vim.api.nvim_win_set_cursor(0, { row, #trimmed + 1 })
+	else
+		vim.api.nvim_feedkeys(";", "n", false)
+	end
+end, { noremap = true, silent = true })
+
+-- Append ; to end of line (if not already there) and return to normal mode
+vim.keymap.set({ "n", "i" }, "<C-;>", function()
+	local line = vim.api.nvim_get_current_line()
+	local trimmed = line:match("^(.-)%s*$")
+	if not trimmed:match(";$") then
+		vim.api.nvim_set_current_line(trimmed .. ";")
+	end
+	local row = vim.api.nvim_win_get_cursor(0)[1]
+	vim.api.nvim_win_set_cursor(0, { row, #vim.api.nvim_get_current_line() - 1 })
+	if vim.api.nvim_get_mode().mode == "i" then
+		vim.cmd("stopinsert")
+	end
+end, { noremap = true, silent = true })
