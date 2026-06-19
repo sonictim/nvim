@@ -53,14 +53,53 @@ vim.keymap.set(
 )
 
 --Qick buffer switching
+
+local build = {
+	zig = "zig build",
+	rust = "cargo build",
+	cpp = "g++ % -o %<",
+	c = "gcc % -o %<",
+}
+
+local run = {
+	zig = "zig build run",
+	rust = "cargo run",
+}
+
+local function compile()
+	local cmd = build[vim.bo.filetype]
+
+	if cmd then
+		vim.cmd("!" .. cmd)
+	else
+		print("No compile command for " .. vim.bo.filetype)
+	end
+end
+
+local function execute()
+	local cmd = run[vim.bo.filetype]
+
+	if cmd then
+		vim.cmd("!" .. cmd)
+	else
+		print("No compile command for " .. vim.bo.filetype)
+	end
+end
+
+
+
 vim.keymap.set("n", "<leader>bn", "<cmd>bnext<CR>")
 vim.keymap.set("n", "<leader>bp", "<cmd>bprevious<CR>")
 vim.keymap.set("n", "<leader>bd", "<cmd>bdelete<CR>")
-vim.keymap.set("n", "<leader>bx", ":!chmod +x %<CR>", { desc = "[B]uffer make e[X]ecutable" })
-vim.keymap.set("n", "<leader>bX", ":!%<CR>", { desc = "[B]uffer e[X]ecute" })
-vim.keymap.set("n", "<leader>bc", ":!sudo rm config.h<CR>:!sudo make clean install<CR>",
+vim.keymap.set("n", "<leader>bX", ":!chmod +x %<CR>", { desc = "[B]uffer make e[X]ecutable" })
+vim.keymap.set("n", "<leader>bx", execute, { desc = "[B]uffer e[X]ecute" })
+vim.keymap.set("n", "<leader>bc", compile,
 	{ desc = "[B]uffer compile [C]" })
-vim.keymap.set("n", "<leader>br", ":!cargo run", { desc = "[B]uffer compile [R]ust" })
+vim.keymap.set("n", "<leader>br", ":!cargo run<CR>", { desc = "[B]uffer compile [R]ust" })
+vim.keymap.set("n", "<leader>bz", ":!zig build run<CR>", { desc = "[B]uffer compile [Z]ig" })
+
+
+
 
 --Quick All Yank or Replace
 vim.keymap.set("n", "<leader>ay", "maggVGy`a", { desc = "Yank entire buffer" })
@@ -253,7 +292,7 @@ local function toggle_boolean()
 end
 
 -- Set up the keybinding
-vim.keymap.set("n", "<leader>b", toggle_boolean, {
+vim.keymap.set("n", "<leader>o", toggle_boolean, {
 	desc = "Toggle closest [B]oolean on current line",
 	noremap = true,
 	silent = true,

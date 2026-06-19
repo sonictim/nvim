@@ -16,6 +16,8 @@ local lsps = {
     "sourcekit",
     "clangd",
     "zls",
+    "php",
+    "markdown",
 }
 --DONT FORGET TO ADD THE CORRESPONDING .LUA FILES to the LSP directory
 vim.lsp.enable(lsps)
