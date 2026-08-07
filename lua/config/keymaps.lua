@@ -12,6 +12,41 @@ end, { desc = "Save all files" })
 
 vim.keymap.set("n", "<F1>", "<cmd>vert help<CR>")
 
+
+vim.keymap.set("n", "<leader>bl", function()
+	local llm_buf = vim.fn.bufnr("LLM")
+
+	-- Buffer exists
+	if llm_buf ~= -1 then
+		local llm_win = vim.fn.bufwinid(llm_buf)
+
+		-- Already visible: focus it
+		if llm_win ~= -1 then
+			vim.api.nvim_set_current_win(llm_win)
+			vim.cmd("startinsert")
+			return
+		end
+
+		-- Exists but hidden: reopen it
+		vim.cmd("botright vertical 80split")
+		vim.api.nvim_set_current_buf(llm_buf)
+		vim.cmd("startinsert")
+		return
+	end
+
+	-- Doesn't exist: create it
+	vim.cmd("botright vertical 80split")
+	vim.cmd("terminal claude")
+	vim.cmd("file LLM")
+
+	local buf = vim.api.nvim_get_current_buf()
+	vim.bo[buf].buflisted = false
+	vim.bo[buf].swapfile = false
+
+	vim.cmd("startinsert")
+end, { desc = "[B]uffer [L]LM" })
+
+
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
 -- vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
@@ -270,8 +305,8 @@ local function toggle_boolean()
 	-- Toggle the closest boolean if found
 	if closest_match then
 		local new_line = string.sub(line, 1, closest_match.start_pos - 1)
-		    .. closest_match.replacement
-		    .. string.sub(line, closest_match.end_pos + 1)
+			.. closest_match.replacement
+			.. string.sub(line, closest_match.end_pos + 1)
 
 		vim.api.nvim_set_current_line(new_line)
 
