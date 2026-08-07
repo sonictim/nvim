@@ -1,3 +1,9 @@
+local on_attach = function(client, bufnr)
+	vim.bo[bufnr].makeprg = "zig build"
+	vim.b[bufnr].runprg = "zig build run"
+end
+
+
 vim.filetype.add({
 	extension = {
 		zon = "zig"
@@ -17,6 +23,7 @@ return {
 	cmd = { "zls" },
 	filetypes = { "zig" },
 	root_markers = { "build.zig" },
+	on_attach = on_attach,
 	-- There are two ways to set config options:
 	--   - edit your `zls.json` that applies to any editor that uses ZLS
 	--   - set in-editor config options with the `settings` field below.

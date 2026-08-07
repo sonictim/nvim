@@ -53,14 +53,48 @@ vim.keymap.set(
 )
 
 --Qick buffer switching
-vim.keymap.set("n", "<leader>bn", "<cmd>bnext<CR>")
-vim.keymap.set("n", "<leader>bp", "<cmd>bprevious<CR>")
-vim.keymap.set("n", "<leader>bd", "<cmd>bdelete<CR>")
+vim.keymap.set("n", "<leader>bn", "<cmd>bnext<CR>", { desc = "[B]uffer [N]ext" })
+vim.keymap.set("n", "<leader>bp", "<cmd>bprevious<CR>", { desc = "[B]uffer [P]revious" })
+vim.keymap.set("n", "<leader>bd", "<cmd>bdelete<CR>", { desc = "[B]uffer [D]elete" })
+vim.keymap.set("n", "<leader>bb", "<cmd>make<CR>", { desc = "[B]uffer [B]uild" })
 vim.keymap.set("n", "<leader>bx", ":!chmod +x %<CR>", { desc = "[B]uffer make e[X]ecutable" })
+vim.keymap.set("n", "<leader>bq", "<cmd>Telescope quickfix<CR>", { desc = "[B]uffer [Q]uickfix list" })
 vim.keymap.set("n", "<leader>bX", ":!%<CR>", { desc = "[B]uffer e[X]ecute" })
-vim.keymap.set("n", "<leader>bc", ":!sudo rm config.h<CR>:!sudo make clean install<CR>",
-	{ desc = "[B]uffer compile [C]" })
-vim.keymap.set("n", "<leader>br", ":!cargo run", { desc = "[B]uffer compile [R]ust" })
+-- vim.keymap.set("n", "<leader>bc", ":!sudo rm config.h<CR>:!sudo make clean install<CR>",
+-- { desc = "[B]uffer compile [C]" })
+vim.keymap.set("n", "<leader>br", function()
+	if not vim.b.runprg then
+		vim.notify("No run command configured", vim.log.levels.WARN)
+		return
+	end
+	local original_win = vim.api.nvim_get_current_win()
+	local run_buf = vim.fn.bufnr("RUN")
+	if run_buf ~= -1 then
+		local run_win = vim.fn.bufwinid(run_buf)
+		if run_win ~= -1 then
+			vim.api.nvim_win_close(run_win, true)
+		end
+		vim.api.nvim_buf_delete(run_buf, { force = true })
+	end
+	vim.cmd("botright vertical 80 split")
+	vim.cmd("terminal " .. vim.b.runprg)
+	vim.cmd("file RUN")
+	-- vim.cmd("startinsert")
+	vim.bo[vim.fn.bufnr("RUN")].buflisted = false
+	vim.bo[vim.fn.bufnr("RUN")].swapfile = false
+	vim.api.nvim_set_current_win(original_win)
+end, { desc = "[B]uffer [R]un" })
+vim.keymap.set("n", "<leader>bk", function()
+	local run_buf = vim.fn.bufnr("RUN")
+	if run_buf ~= -1 then
+		local run_win = vim.fn.bufwinid(run_buf)
+		if run_win ~= -1 then
+			vim.api.nvim_win_close(run_win, true)
+		end
+		vim.api.nvim_buf_delete(run_buf, { force = true })
+	end
+end, { desc = "[B]uffer [K]ill Run Buffer" })
+
 
 --Quick All Yank or Replace
 vim.keymap.set("n", "<leader>ay", "maggVGy`a", { desc = "Yank entire buffer" })
