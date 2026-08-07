@@ -242,7 +242,8 @@ local function toggle_boolean()
 	for _, bool_pair in ipairs(patterns) do
 		local start_pos = 1
 		while true do
-			local match_start, match_end = string.find(line, "%f[%w]" .. bool_pair.pattern .. "%f[^%w]", start_pos)
+			local match_start, match_end = string.find(line, "%f[%w]" .. bool_pair.pattern .. "%f[^%w]",
+				start_pos)
 			if not match_start then
 				break
 			end
@@ -269,8 +270,8 @@ local function toggle_boolean()
 	-- Toggle the closest boolean if found
 	if closest_match then
 		local new_line = string.sub(line, 1, closest_match.start_pos - 1)
-			.. closest_match.replacement
-			.. string.sub(line, closest_match.end_pos + 1)
+		    .. closest_match.replacement
+		    .. string.sub(line, closest_match.end_pos + 1)
 
 		vim.api.nvim_set_current_line(new_line)
 
@@ -287,7 +288,7 @@ local function toggle_boolean()
 end
 
 -- Set up the keybinding
-vim.keymap.set("n", "<leader>b", toggle_boolean, {
+vim.keymap.set("n", "<leader>o", toggle_boolean, {
 	desc = "Toggle closest [B]oolean on current line",
 	noremap = true,
 	silent = true,
