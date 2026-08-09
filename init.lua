@@ -1,10 +1,10 @@
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
+
 require("vim._core.ui2").enable({})
-
-
-require("config.lsp")
 require("config.autocmds")
 require("config.keymaps")
-
+require("config.lsp")
 
 -- Manually require all plugin config files
 require("plugins.lualine")

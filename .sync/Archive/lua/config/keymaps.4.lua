@@ -1,3 +1,5 @@
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 -- Save current file with Super+S
@@ -11,38 +13,25 @@ end, { desc = "Save all files" })
 vim.keymap.set("n", "<F1>", "<cmd>vert help<CR>")
 
 
-vim.keymap.set("n", "<leader>bl", function()
+vim.keymap.set("n", "<leader>lc", function()
+	local original_win = vim.api.nvim_get_current_win()
 	local llm_buf = vim.fn.bufnr("LLM")
-
-	-- Buffer exists
 	if llm_buf ~= -1 then
 		local llm_win = vim.fn.bufwinid(llm_buf)
-
-		-- Already visible: focus it
 		if llm_win ~= -1 then
-			vim.api.nvim_set_current_win(llm_win)
-			vim.cmd("startinsert")
-			return
+			vim.api.nvim_set_current_win(original_win)
 		end
-
-		-- Exists but hidden: reopen it
-		vim.cmd("botright vertical 80split")
-		vim.api.nvim_set_current_buf(llm_buf)
-		vim.cmd("startinsert")
-		return
+		vim.api.nvim_buf_delete(llm_buf, { force = true })
 	end
-
-	-- Doesn't exist: create it
-	vim.cmd("botright vertical 80split")
+	vim.cmd("botright vertical 80 split")
 	vim.cmd("terminal claude")
 	vim.cmd("file LLM")
+	-- vim.cmd("startinsert")
+	vim.bo[vim.fn.bufnr("LLM")].buflisted = false
+	vim.bo[vim.fn.bufnr("LLM")].swapfile = false
+	vim.api.nvim_set_current_win(original_win)
+end, { desc = "[C]hat with LLM" })
 
-	local buf = vim.api.nvim_get_current_buf()
-	vim.bo[buf].buflisted = false
-	vim.bo[buf].swapfile = false
-
-	vim.cmd("startinsert")
-end, { desc = "[B]uffer [L]LM" })
 
 
 -- Clear highlights on search when pressing <Esc> in normal mode
@@ -52,7 +41,7 @@ end, { desc = "[B]uffer [L]LM" })
 -- Diagnostic keymaps
 vim.keymap.set("n", "<leader>ql", vim.diagnostic.setloclist, { desc = "Open local diagnostic quickfix list" })
 vim.keymap.set("n", "<leader>qg", vim.diagnostic.setqflist, { desc = "Open global diagnostic quickfix List" })
-vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Show Line Diagnostics (Errors)" })
+vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Show Line Diagnostics" })
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
@@ -86,13 +75,13 @@ vim.keymap.set(
 )
 
 --Qick buffer switching
-vim.keymap.set("n", "<leader>bn", "<cmd>bnext<CR>", { desc = "[N]ext Buffer" })
-vim.keymap.set("n", "<leader>bp", "<cmd>bprevious<CR>", { desc = "[P]revious Buffer" })
-vim.keymap.set("n", "<leader>bd", "<cmd>bdelete<CR>", { desc = "[D]elete Buffer" })
-vim.keymap.set("n", "<leader>bb", "<cmd>make<CR>", { desc = "[B]uild Buffer" })
-vim.keymap.set("n", "<leader>bX", ":!chmod +x %<CR>", { desc = "Make Buffer e[X]ecutable" })
-vim.keymap.set("n", "<leader>bq", "<cmd>Telescope quickfix<CR>", { desc = "[Q]uickfix list" })
-vim.keymap.set("n", "<leader>bx", ":!%<CR>", { desc = "e[X]ecute Buffer" })
+vim.keymap.set("n", "<leader>bn", "<cmd>bnext<CR>", { desc = "[B]uffer [N]ext" })
+vim.keymap.set("n", "<leader>bp", "<cmd>bprevious<CR>", { desc = "[B]uffer [P]revious" })
+vim.keymap.set("n", "<leader>bd", "<cmd>bdelete<CR>", { desc = "[B]uffer [D]elete" })
+vim.keymap.set("n", "<leader>bb", "<cmd>make<CR>", { desc = "[B]uffer [B]uild" })
+vim.keymap.set("n", "<leader>bx", ":!chmod +x %<CR>", { desc = "[B]uffer make e[X]ecutable" })
+vim.keymap.set("n", "<leader>bq", "<cmd>Telescope quickfix<CR>", { desc = "[B]uffer [Q]uickfix list" })
+vim.keymap.set("n", "<leader>bX", ":!%<CR>", { desc = "[B]uffer e[X]ecute" })
 -- vim.keymap.set("n", "<leader>bc", ":!sudo rm config.h<CR>:!sudo make clean install<CR>",
 -- { desc = "[B]uffer compile [C]" })
 vim.keymap.set("n", "<leader>br", function()
@@ -116,7 +105,7 @@ vim.keymap.set("n", "<leader>br", function()
 	vim.bo[vim.fn.bufnr("RUN")].buflisted = false
 	vim.bo[vim.fn.bufnr("RUN")].swapfile = false
 	vim.api.nvim_set_current_win(original_win)
-end, { desc = "[R]un Buffer" })
+end, { desc = "[B]uffer [R]un" })
 vim.keymap.set("n", "<leader>bk", function()
 	local run_buf = vim.fn.bufnr("RUN")
 	if run_buf ~= -1 then
@@ -126,7 +115,7 @@ vim.keymap.set("n", "<leader>bk", function()
 		end
 		vim.api.nvim_buf_delete(run_buf, { force = true })
 	end
-end, { desc = "[K]ill Run Buffer" })
+end, { desc = "[B]uffer [K]ill Run Buffer" })
 
 
 --Quick All Yank or Replace
@@ -170,7 +159,7 @@ vim.keymap.set("i", "<C-k>", "<up>", { desc = "Move cursor up" })
 -- vim.keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
 
 
-vim.keymap.set("n", "<leader>ty", function() _G.toggle_transparency() end, { desc = "Transparenc[Y]" })
+vim.keymap.set("n", "<leader>ty", function() _G.toggle_transparency() end, { desc = "Toggle Transparenc[Y]" })
 -- require("plugins.quickfix").setup()
 -- require 'custom.method_browser'
 -- Toggle between cargo check and clippy
@@ -200,7 +189,7 @@ local function toggle_rust_check()
 end
 
 -- Set up the keybinding
-vim.keymap.set("n", "<leader>tc", toggle_rust_check, { desc = "Rust [C]heck or Clippy" })
+vim.keymap.set("n", "<leader>tc", toggle_rust_check, { desc = "[T]oggle Rust [C]heck/Clippy" })
 
 local qbuf = -1
 local job_id = 0
@@ -226,7 +215,7 @@ local function quickterm()
 	end
 end
 
-vim.keymap.set({ "n", "t" }, "<leader>tt", quickterm, { desc = "Quick [T]erminal" })
+vim.keymap.set({ "n", "t" }, "<leader>tt", quickterm, { desc = "[T]oggle Quick [T]erminal" })
 
 -- vim.keymap.set('n', '<leader>gc', function()
 --   vim.fn.chansend(job_id, { "git add . && git commit -m '" })
@@ -321,29 +310,17 @@ local function toggle_boolean()
 end
 
 -- Set up the keybinding
-vim.keymap.set("n", "<leader>tb", toggle_boolean, {
-	desc = "closest [B]oolean on current line",
+vim.keymap.set("n", "<leader>o", toggle_boolean, {
+	desc = "Toggle closest [B]oolean on current line",
 	noremap = true,
 	silent = true,
 })
-
-local function reload_config()
-	for name in pairs(package.loaded) do
-		if name:match("^config") then
-			package.loaded[name] = nil
-		end
-	end
-
-	dofile(vim.env.MYVIMRC)
-end
-
 
 vim.keymap.set("n", "<leader>u", function()
 	-- Only update if file has a name
 	if vim.fn.expand("%") ~= "" then
 		vim.cmd("update")
 	end
-	reload_config()
 	vim.cmd("source")
 	vim.pack.update()
 end, { desc = "[U]pdate" })

@@ -33,16 +33,17 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
         -- Navigation with Telescope(better than built-in)
         map("gd", require("telescope.builtin").lsp_definitions, "[G]oto [D]efinition")
-        map("gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
-        map("gI", require("telescope.builtin").lsp_implementations, "[G]oto [I]mplementation")
-        map("<leader>D", require("telescope.builtin").lsp_type_definitions, "Type [D]efinition")
-        map("<leader>ds", require("telescope.builtin").lsp_document_symbols, "[D]ocument [S]ymbols")
-        map("<leader>ws", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[W]orkspace [S]ymbols")
+        map("<leader>ld", require("telescope.builtin").lsp_definitions, "Goto [D]efinition")
+        map("<leader>lD", vim.lsp.buf.declaration, "Goto [D]eclaration")
+        map("<leader>lt", require("telescope.builtin").lsp_type_definitions, "Goto [T]ype Definition")
+        map("<leader>lR", require("telescope.builtin").lsp_references, "Goto [R]eferences")
+        map("<leader>li", require("telescope.builtin").lsp_implementations, "Goto [I]mplementation")
+        map("<leader>lsd", require("telescope.builtin").lsp_document_symbols, "[D]ocument [S]ymbols")
+        map("<leader>lsw", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[W]orkspace [S]ymbols")
 
         -- Essential actions
-        map("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
-        map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction", { "n", "x" })
-        map("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
+        map("<leader>r", vim.lsp.buf.rename, "[R]ename")
+        map("<leader>lca", vim.lsp.buf.code_action, "[C]ode [A]ction", { "n", "x" })
 
         -- Inlay hints toggle
         local client = vim.lsp.get_client_by_id(event.data.client_id)
@@ -85,7 +86,7 @@ local function format_or_fallback()
 end
 
 -- Keymap for manual formatting
-vim.keymap.set("n", "<leader>f", format_or_fallback, { desc = "[F]ormat buffer (LSP or fallback)" })
+vim.keymap.set("n", "<leader>bf", format_or_fallback, { desc = "[F]ormat buffer (LSP or fallback)" })
 
 -- Autoformat on save
 vim.api.nvim_create_autocmd("BufWritePre", {
@@ -101,7 +102,7 @@ vim.keymap.set("n", "<leader>lr", function()
 end, { desc = "[LSP] Restart all servers" })
 
 
-vim.keymap.set("n", "<leader>ls", function()
+vim.keymap.set("n", "<leader>tl", function()
     local clients = vim.lsp.get_clients()
 
     if #clients > 0 then
@@ -111,4 +112,4 @@ vim.keymap.set("n", "<leader>ls", function()
     else
         vim.lsp.enable(lsps)
     end
-end, { desc = "[LSP] Toggle start/stop" })
+end, { desc = "[LSP]" })
