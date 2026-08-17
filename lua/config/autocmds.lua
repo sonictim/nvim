@@ -81,3 +81,14 @@ vim.api.nvim_create_user_command("Cpp2h", function()
 	vim.fn.setreg("+", text)
 	print("Function declarations copied to clipboard!")
 end, {})
+
+
+
+
+-- vim.api.nvim_create_autocmd("VimEnter", {
+-- 	callback = function()
+-- 		if vim.fn.argc() == 0 then
+-- 			require("telescope.builtin").find_files()
+-- 		end
+-- 	end,
+-- })
