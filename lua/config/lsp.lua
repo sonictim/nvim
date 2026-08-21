@@ -55,7 +55,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
                 "[T]oggle Inlay [H]ints")
         end
         -- Auto Completion
-        if client and client:supports_method("textDocument/completion") then
+        if client:supports_method("textDocument/completion") then
             vim.opt.completeopt = { "menu", "menuone", "noinsert", "fuzzy", "popup" }
             vim.lsp.completion.enable(true, client.id, event.buf, { autotrigger = true })
             vim.keymap.set("i", "<C-Space>", function()
@@ -74,21 +74,15 @@ vim.diagnostic.config({
     virtual_lines = { current_line = true },
 })
 
--- Format buffer with LSP, falling back to ggVG= when no server can format it.
--- NOTE: pcall is not a usable probe here -- vim.lsp.buf.format() returns quietly
--- when no client supports formatting, so ask for a capable client directly.
+-- Function: format buffer with LSP, fallback to ggVG=
 local function format_or_fallback()
-    local clients = vim.lsp.get_clients({ bufnr = 0, method = "textDocument/formatting" })
-
-    if #clients > 0 then
+    local success = pcall(function()
         vim.lsp.buf.format({ async = false })
-        return
-    end
+    end)
 
-    -- ggVG= jumps the cursor and clobbers the ` mark, so restore the view.
-    local view = vim.fn.winsaveview()
-    vim.cmd("normal! ggVG=")
-    vim.fn.winrestview(view)
+    if not success then
+        vim.cmd("normal! ggVG=")
+    end
 end
 
 -- Keymap for manual formatting

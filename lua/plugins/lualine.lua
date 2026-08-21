@@ -29,10 +29,8 @@ require("lualine").setup({
 			-- 	end,
 			-- },
 			{
-				-- Deferred: lualine loads before quick-install puts roto-rooter on rtp.
 				function()
-					local ok, roto = pcall(require, "roto-rooter")
-					return ok and roto.relative_dir() or vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
+					return vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
 				end,
 				icon = "󰉋",
 			},

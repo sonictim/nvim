@@ -1,5 +1,5 @@
--- NOTE: vim.g.have_nerd_font is set in init.lua, not here -- plugins (which-key)
--- read it at setup time, which happens before this file is loaded.
+-- Set to true if you have a Nerd Font installed and selected in the terminal
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.o`
