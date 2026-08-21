@@ -1,0 +1,3 @@
+# Resilio Sync metadata and its file-version archive.
+# Kept on disk, not in the repo.
+.sync/

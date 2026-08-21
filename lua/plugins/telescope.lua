@@ -6,14 +6,52 @@ vim.pack.add({
 	"https://github.com/nvim-tree/nvim-web-devicons",
 })
 
--- Build fzf-native if make is available
--- Note: This will run after the plugin is downloaded on first startup
-vim.defer_fn(function()
-	local fzf_path = vim.fn.stdpath("data") .. "/pack/downloads/opt/telescope-fzf-native.nvim"
-	if vim.fn.executable("make") == 1 and vim.fn.isdirectory(fzf_path) == 1 then
-		vim.system({"make"}, { cwd = fzf_path })
+-- Build fzf-native. The path comes from vim.pack itself rather than being
+-- hardcoded, so it can't drift out of sync with where plugins actually live.
+local FZF = "telescope-fzf-native.nvim"
+
+local function fzf_path()
+	for _, p in ipairs(vim.pack.get()) do
+		if p.spec.name == FZF then
+			return p.path
+		end
 	end
-end, 1000)
+end
+
+local function build_fzf(sync)
+	local path = fzf_path()
+	if not path or vim.fn.executable("make") ~= 1 then
+		return
+	end
+	local on_exit = function(out)
+		if out.code ~= 0 then
+			vim.schedule(function()
+				vim.notify(FZF .. " build failed:\n" .. (out.stderr or ""), vim.log.levels.ERROR)
+			end)
+		end
+	end
+	local proc = vim.system({ "make" }, { cwd = path }, not sync and on_exit or nil)
+	if sync then
+		on_exit(proc:wait(60000))
+	end
+end
+
+-- Rebuild whenever vim.pack installs or updates the plugin.
+vim.api.nvim_create_autocmd("PackChanged", {
+	group = vim.api.nvim_create_augroup("telescope-fzf-build", { clear = true }),
+	callback = function(ev)
+		if ev.data.spec.name == FZF and ev.data.kind ~= "delete" then
+			build_fzf(false)
+		end
+	end,
+})
+
+-- Build synchronously if the artifact is missing (first run, or a past failed
+-- build) so load_extension("fzf") below succeeds on this same startup.
+local path = fzf_path()
+if path and vim.fn.isdirectory(path .. "/build") ~= 1 then
+	build_fzf(true)
+end
 		-- Telescope is a fuzzy finder that comes with a lot of different things that
 		-- it can fuzzy find! It's more than just a "file finder", it can search
 		-- many different aspects of Neovim, your workspace, LSP, and more!
@@ -53,17 +91,7 @@ end, 1000)
 						["<c-enter>"] = "to_fuzzy_refine",
 						["<C-j>"] = actions.move_selection_next,
 						["<C-k>"] = actions.move_selection_previous,
-						["<CR>"] = function(prompt_bufnr)
-							actions.select_default(prompt_bufnr)
-							-- Change to git root after selecting
-							vim.defer_fn(function()
-								local git_root =
-									vim.fn.system("git rev-parse --show-toplevel 2>/dev/null"):gsub("\n", "")
-								if vim.v.shell_error == 0 and git_root ~= "" then
-									vim.cmd("lcd " .. git_root)
-								end
-							end, 100)
-						end,
+						-- <CR> is plain select_default; roto-rooter re-roots on BufEnter.
 						-- ['<Esc>'] = actions.close,
 					},
 				},
