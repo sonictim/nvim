@@ -58,7 +58,8 @@ end
 function _G.Statusline()
     local mode = vim.fn.mode()
     local m = modes[mode] or { " " .. mode:upper() .. " ", "SLN" }
-    local pill = "%#" .. m[2] .. "#" .. m[1]
+    local hl = "%#" .. m[2] .. "#" -- mode colour only
+    local pill = hl .. m[1]        -- mode colour + mode name
 
     local branch = vim.b.gitsigns_head
     local br = branch and ("%#SLBr#  " .. branch .. "  ") or ""
@@ -80,7 +81,7 @@ function _G.Statusline()
         .. "%="
         .. "%#SLDm#󰉋 " .. cwd .. "  %{&encoding}  %{&fileformat}  " .. ft_str .. "  "
         .. "%p%%  "
-        .. pill .. " %l:%c "
+        .. hl .. " %l:%c "
 end
 
 vim.o.statusline = "%{%v:lua.Statusline()%}"
