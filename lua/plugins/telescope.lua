@@ -6,14 +6,51 @@ vim.pack.add({
 	"https://github.com/nvim-tree/nvim-web-devicons",
 })
 
--- Build fzf-native if make is available
--- Note: This will run after the plugin is downloaded on first startup
-vim.defer_fn(function()
-	local fzf_path = vim.fn.stdpath("data") .. "/pack/downloads/opt/telescope-fzf-native.nvim"
-	if vim.fn.executable("make") == 1 and vim.fn.isdirectory(fzf_path) == 1 then
-		vim.system({"make"}, { cwd = fzf_path })
+-- Build fzf-native. The path comes from vim.pack itself rather than being
+-- hardcoded, so it cannot drift out of sync with where plugins actually live.
+local FZF = "telescope-fzf-native.nvim"
+
+-- Resolve via a plain filesystem glob, NOT vim.pack.get(): that call shells out
+-- to git for every installed plugin, and running it during startup swallows
+-- Neovim's initial statusline draw (lualine only reappears after :redraw!).
+local function fzf_path()
+	return vim.fn.globpath(vim.o.packpath, "pack/*/opt/" .. FZF, false, true)[1]
+end
+
+local function build_fzf(sync)
+	local path = fzf_path()
+	if not path or vim.fn.executable("make") ~= 1 then
+		return
 	end
-end, 1000)
+	local on_exit = function(out)
+		if out.code ~= 0 then
+			vim.schedule(function()
+				vim.notify(FZF .. " build failed:\n" .. (out.stderr or ""), vim.log.levels.ERROR)
+			end)
+		end
+	end
+	local proc = vim.system({ "make" }, { cwd = path }, not sync and on_exit or nil)
+	if sync then
+		on_exit(proc:wait(60000))
+	end
+end
+
+-- Rebuild whenever vim.pack installs or updates the plugin.
+vim.api.nvim_create_autocmd("PackChanged", {
+	group = vim.api.nvim_create_augroup("telescope-fzf-build", { clear = true }),
+	callback = function(ev)
+		if ev.data.spec.name == FZF and ev.data.kind ~= "delete" then
+			build_fzf(false)
+		end
+	end,
+})
+
+-- Build synchronously if the artifact is missing (first run, or a past failed
+-- build) so load_extension("fzf") below succeeds on this same startup.
+local path = fzf_path()
+if path and vim.fn.isdirectory(path .. "/build") ~= 1 then
+	build_fzf(true)
+end
 		-- Telescope is a fuzzy finder that comes with a lot of different things that
 		-- it can fuzzy find! It's more than just a "file finder", it can search
 		-- many different aspects of Neovim, your workspace, LSP, and more!

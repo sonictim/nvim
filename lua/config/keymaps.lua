@@ -327,25 +327,13 @@ vim.keymap.set("n", "<leader>tb", toggle_boolean, {
 	silent = true,
 })
 
-local function reload_config()
-	for name in pairs(package.loaded) do
-		if name:match("^config") then
-			package.loaded[name] = nil
-		end
-	end
-
-	dofile(vim.env.MYVIMRC)
-end
-
 
 vim.keymap.set("n", "<leader>u", function()
-	-- Only update if file has a name
-	if vim.fn.expand("%") ~= "" then
-		vim.cmd("update")
-	end
-	reload_config()
-	vim.cmd("source")
-	vim.pack.update()
+	local f = vim.fn.stdpath("state") .. "/restart-session.vim"
+	vim.cmd("wall")
+	vim.cmd("mksession! " .. vim.fn.fnameescape(f))
+	vim.pack.update(nil, { force = true })
+	vim.cmd("restart source " .. vim.fn.fnameescape(f))
 end, { desc = "[U]pdate" })
 
 

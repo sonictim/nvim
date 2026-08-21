@@ -1,6 +1,10 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
+-- Set to true if you have a Nerd Font installed and selected in the terminal.
+-- Must be set before any plugin setup() reads it (which-key does).
+vim.g.have_nerd_font = true
+
 require("vim._core.ui2").enable({})
 require("config.autocmds")
 require("config.keymaps")

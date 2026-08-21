@@ -28,32 +28,6 @@ vim.api.nvim_create_user_command('PackUp', function()
 	print('Updates complete!')
 end, {})
 
-vim.api.nvim_create_user_command('PackUpdate', function()
-	local pack_path = vim.fn.stdpath('data') .. '/site/pack/core/opt/*'
-	local plugins = vim.fn.glob(pack_path, false, true)
-
-	for _, plugin in ipairs(plugins) do
-		if vim.fn.isdirectory(plugin .. '/.git') == 1 then
-			local name = vim.fn.fnamemodify(plugin, ':t')
-
-			-- Fetch updates from remote
-			vim.fn.system('git -C ' .. plugin .. ' fetch')
-
-			-- Check if behind remote
-			local behind = vim.fn.system('git -C ' .. plugin .. ' rev-list HEAD..@{u} --count')
-			behind = tonumber(behind) or 0
-
-			if behind > 0 then
-				print('Updating ' .. name .. ' (' .. behind .. ' commits behind)')
-				vim.fn.system('git -C ' .. plugin .. ' pull')
-			else
-				print(name .. ' is up-to-date')
-			end
-		end
-	end
-	print('Updates complete!')
-end, {})
-
 
 -- Copy C++ function declarations to system clipboard
 vim.api.nvim_create_user_command("Cpp2h", function()
