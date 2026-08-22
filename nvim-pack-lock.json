@@ -1,7 +1,7 @@
 {
   "plugins": {
     "escape-hatch.nvim": {
-      "rev": "5e75b7b52dd04854fab09c9fe713661f772470d0",
+      "rev": "dc7ef2cfbc7c1765647dbb16a01cf0c45ce6e330",
       "src": "https://github.com/sonictim/escape-hatch.nvim"
     },
     "fidget.nvim": {
@@ -61,7 +61,7 @@
       "src": "https://github.com/nvim-lua/plenary.nvim"
     },
     "roto-rooter.nvim": {
-      "rev": "d737323cba63bcc846102d761e980cf7230ec602",
+      "rev": "cd9ee9d476dbe6270ce379fe7dd2413e01943f72",
       "src": "https://github.com/sonictim/roto-rooter.nvim"
     },
     "telescope-fzf-native.nvim": {

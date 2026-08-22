@@ -8,8 +8,102 @@ vim.keymap.set({ "n", "i", "v" }, "<D-S>", function()
 	vim.cmd("wall")
 end, { desc = "Save all files" })
 
-vim.keymap.set("n", "<F1>", "<cmd>vert help<CR>")
 
+-- Diagnostic keymaps
+vim.keymap.set("n", "<leader>ql", vim.diagnostic.setloclist, { desc = "Open local diagnostic quickfix list" })
+vim.keymap.set("n", "<leader>qg", vim.diagnostic.setqflist, { desc = "Open global diagnostic quickfix List" })
+vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Show Line Diagnostics (Errors)" })
+-- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
+-- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
+-- is not what someone will guess without a bit more experience.
+--
+-- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
+-- or just use <C-\><C-n> to exit terminal mode
+
+--Quick All Yank or Replace
+vim.keymap.set("n", "<leader>ay", "maggVGy`a", { desc = "Yank entire buffer" })
+vim.keymap.set("n", "<leader>ap", "maggVGp`a", { desc = "Paste over entire buffer" })
+vim.keymap.set("n", "<leader>aa", "maggVG`a", { desc = "Select entire buffer" })
+vim.keymap.set("n", "<leader>a=", "maggVG=`a", { desc = "Format entire buffer" })
+
+vim.keymap.set("n", "<leader>\\", vim.cmd.vsplit, { desc = "Vertical Split" })
+vim.keymap.set("n", "<leader>-", vim.cmd.split, { desc = "Horizontal Split" })
+-- FROM PRIMEAGEN
+vim.keymap.set("x", "<leader>p", '"_dP', { desc = "Paste without Yanking" })
+vim.keymap.set({ "x", "v" }, "<leader>d", '"_d', { desc = "delete without Yanking" })
+
+vim.keymap.set("n", "n", "nzzzv", { desc = "Find Next, Center View, unfold if hidden" })
+vim.keymap.set("n", "N", "Nzzzv", { desc = "Find Prev, Center View, unfold if hidden" })
+vim.keymap.set("n", "<C-d>", "<C-d>zz", { desc = "Move Down and Recenter" })
+vim.keymap.set("n", "<C-u>", "<C-u>zz", { desc = "Move Up and Recenter" })
+vim.keymap.set({ "n", "i", "v" }, "<F1>", "<Nop>", { desc = "Disable accidental help" })
+
+-- Move Lines in Visual Mode
+-- vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
+-- vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
+vim.keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
+vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
+
+-- Replace Word Under Cursor
+vim.keymap.set(
+	"n",
+	"<leader>r",
+	[[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]],
+	{ desc = "[R]eplace word under cursor" }
+)
+
+--Qick buffer switching
+vim.keymap.set("n", "<leader>bn", "<cmd>bnext<CR>", { desc = "[N]ext Buffer" })
+vim.keymap.set("n", "<leader>bp", "<cmd>bprevious<CR>", { desc = "[P]revious Buffer" })
+vim.keymap.set("n", "<leader>bd", "<cmd>bdelete<CR>", { desc = "[D]elete Buffer" })
+vim.keymap.set("n", "<leader>bb", "<cmd>make<CR>", { desc = "[B]uild Buffer" })
+vim.keymap.set("n", "<leader>bX", ":!chmod +x %<CR>", { desc = "Make Buffer e[X]ecutable" })
+vim.keymap.set("n", "<leader>bq", "<cmd>Telescope quickfix<CR>", { desc = "[Q]uickfix list" })
+vim.keymap.set("n", "<leader>bx", ":!%<CR>", { desc = "e[X]ecute Buffer" })
+vim.keymap.set("n", "<leader>br", function()
+	if not vim.b.runprg then
+		vim.notify("No run command configured", vim.log.levels.WARN)
+		return
+	end
+
+	-- local root = vim.fs.root(0, {
+	-- 	".git",
+	-- 	"package.json",
+	-- 	"Cargo.toml",
+	-- 	"go.mod",
+	-- 	"Makefile",
+	-- 	"pyproject.toml",
+	-- 	"build.zig",
+	-- })
+	-- vim.cmd.bcd(root)
+	local original_win = vim.api.nvim_get_current_win()
+	local run_buf = vim.fn.bufnr("RUN")
+	if run_buf ~= -1 then
+		local run_win = vim.fn.bufwinid(run_buf)
+		if run_win ~= -1 then
+			vim.api.nvim_win_close(run_win, true)
+		end
+		vim.api.nvim_buf_delete(run_buf, { force = true })
+	end
+	vim.cmd("botright vertical 80 split")
+	vim.cmd("terminal " .. vim.b.runprg)
+	vim.cmd("file RUN")
+	-- vim.cmd("startinsert")
+	vim.bo[vim.fn.bufnr("RUN")].buflisted = false
+	vim.bo[vim.fn.bufnr("RUN")].swapfile = false
+	vim.api.nvim_set_current_win(original_win)
+end, { desc = "[R]un Buffer" })
+
+vim.keymap.set("n", "<leader>bk", function()
+	local run_buf = vim.fn.bufnr("RUN")
+	if run_buf ~= -1 then
+		local run_win = vim.fn.bufwinid(run_buf)
+		if run_win ~= -1 then
+			vim.api.nvim_win_close(run_win, true)
+		end
+		vim.api.nvim_buf_delete(run_buf, { force = true })
+	end
+end, { desc = "[K]ill Run Buffer" })
 
 vim.keymap.set("n", "<leader>bl", function()
 	local llm_buf = vim.fn.bufnr("LLM")
@@ -45,98 +139,6 @@ vim.keymap.set("n", "<leader>bl", function()
 end, { desc = "[B]uffer [L]LM" })
 
 
--- Clear highlights on search when pressing <Esc> in normal mode
---  See `:help hlsearch`
--- vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
-
--- Diagnostic keymaps
-vim.keymap.set("n", "<leader>ql", vim.diagnostic.setloclist, { desc = "Open local diagnostic quickfix list" })
-vim.keymap.set("n", "<leader>qg", vim.diagnostic.setqflist, { desc = "Open global diagnostic quickfix List" })
-vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Show Line Diagnostics (Errors)" })
--- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
--- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
--- is not what someone will guess without a bit more experience.
---
--- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
--- or just use <C-\><C-n> to exit terminal mode
-
--- FROM PRIMEAGEN
-vim.keymap.set("x", "<leader>p", '"_dP', { desc = "Paste without Yanking" })
-vim.keymap.set({ "x", "v" }, "<leader>d", '"_d', { desc = "delete without Yanking" })
-
--- vim.keymap.set("n", "n", "nzzzv", { desc = "Find Next, Center View, unfold if hidden" })
-vim.keymap.set("n", "N", "Nzzzv", { desc = "Find Prev, Center View, unfold if hidden" })
-vim.keymap.set("n", "<C-d>", "<C-d>zz", { desc = "Move Down and Recenter" })
-vim.keymap.set("n", "<C-u>", "<C-u>zz", { desc = "Move Up and Recenter" })
--- Disable F1 in normal, insert, and visual modes
-vim.keymap.set({ "n", "i", "v" }, "<F1>", "<Nop>", { desc = "Disable accidental help" })
-
--- Move Lines in Visual Mode
--- vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
--- vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
-vim.keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
-vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
-
--- Replace Word Under Cursor
-vim.keymap.set(
-	"n",
-	"<leader>r",
-	[[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]],
-	{ desc = "[R]eplace word under cursor" }
-)
-
---Qick buffer switching
-vim.keymap.set("n", "<leader>bn", "<cmd>bnext<CR>", { desc = "[N]ext Buffer" })
-vim.keymap.set("n", "<leader>bp", "<cmd>bprevious<CR>", { desc = "[P]revious Buffer" })
-vim.keymap.set("n", "<leader>bd", "<cmd>bdelete<CR>", { desc = "[D]elete Buffer" })
-vim.keymap.set("n", "<leader>bb", "<cmd>make<CR>", { desc = "[B]uild Buffer" })
-vim.keymap.set("n", "<leader>bX", ":!chmod +x %<CR>", { desc = "Make Buffer e[X]ecutable" })
-vim.keymap.set("n", "<leader>bq", "<cmd>Telescope quickfix<CR>", { desc = "[Q]uickfix list" })
-vim.keymap.set("n", "<leader>bx", ":!%<CR>", { desc = "e[X]ecute Buffer" })
--- vim.keymap.set("n", "<leader>bc", ":!sudo rm config.h<CR>:!sudo make clean install<CR>",
--- { desc = "[B]uffer compile [C]" })
-vim.keymap.set("n", "<leader>br", function()
-	if not vim.b.runprg then
-		vim.notify("No run command configured", vim.log.levels.WARN)
-		return
-	end
-	local original_win = vim.api.nvim_get_current_win()
-	local run_buf = vim.fn.bufnr("RUN")
-	if run_buf ~= -1 then
-		local run_win = vim.fn.bufwinid(run_buf)
-		if run_win ~= -1 then
-			vim.api.nvim_win_close(run_win, true)
-		end
-		vim.api.nvim_buf_delete(run_buf, { force = true })
-	end
-	vim.cmd("botright vertical 80 split")
-	vim.cmd("terminal " .. vim.b.runprg)
-	vim.cmd("file RUN")
-	-- vim.cmd("startinsert")
-	vim.bo[vim.fn.bufnr("RUN")].buflisted = false
-	vim.bo[vim.fn.bufnr("RUN")].swapfile = false
-	vim.api.nvim_set_current_win(original_win)
-end, { desc = "[R]un Buffer" })
-vim.keymap.set("n", "<leader>bk", function()
-	local run_buf = vim.fn.bufnr("RUN")
-	if run_buf ~= -1 then
-		local run_win = vim.fn.bufwinid(run_buf)
-		if run_win ~= -1 then
-			vim.api.nvim_win_close(run_win, true)
-		end
-		vim.api.nvim_buf_delete(run_buf, { force = true })
-	end
-end, { desc = "[K]ill Run Buffer" })
-
-
---Quick All Yank or Replace
-vim.keymap.set("n", "<leader>ay", "maggVGy`a", { desc = "Yank entire buffer" })
-vim.keymap.set("n", "<leader>ap", "maggVGp`a", { desc = "Paste over entire buffer" })
-vim.keymap.set("n", "<leader>aa", "maggVG`a", { desc = "Select entire buffer" })
-vim.keymap.set("n", "<leader>a=", "maggVG=`a", { desc = "Format entire buffer" })
-
-vim.keymap.set("n", "<leader>\\", vim.cmd.vsplit, { desc = "Vertical Split" })
-vim.keymap.set("n", "<leader>-", vim.cmd.split, { desc = "Horizontal Split" })
 --swap Commands and go to next with F/T
 -- vim.keymap.set({ 'n', 'v' }, ';', ':')
 -- vim.keymap.set({ 'n', 'v' }, ':', ';')
@@ -329,11 +331,12 @@ vim.keymap.set("n", "<leader>tb", toggle_boolean, {
 
 
 vim.keymap.set("n", "<leader>u", function()
-	local f = vim.fn.stdpath("state") .. "/restart-session.vim"
-	vim.cmd("wall")
-	vim.cmd("mksession! " .. vim.fn.fnameescape(f))
+	-- local f = vim.fn.stdpath("state") .. "/restart-session.vim"
+	-- vim.cmd("wall")
+	-- vim.cmd("mksession! " .. vim.fn.fnameescape(f))
 	vim.pack.update(nil, { force = true })
-	vim.cmd("restart source " .. vim.fn.fnameescape(f))
+	-- vim.cmd("restart source " .. vim.fn.fnameescape(f))
+	vim.cmd("restart")
 end, { desc = "[U]pdate" })
 
 
@@ -358,19 +361,6 @@ vim.keymap.set("i", "<C-p>", function()
 	end
 end, { expr = true, noremap = true })
 
-vim.keymap.set("i", ";", function()
-	local line = vim.api.nvim_get_current_line()
-	local row, col = unpack(vim.api.nvim_win_get_cursor(0))
-	local after_cursor = line:sub(col + 1)
-
-	if after_cursor:match("^[%)%]%}\"'%s]+$") then
-		local trimmed = line:match("^(.-)%s*$")
-		vim.api.nvim_set_current_line(trimmed .. ";")
-		vim.api.nvim_win_set_cursor(0, { row, #trimmed + 1 })
-	else
-		vim.api.nvim_feedkeys(";", "n", false)
-	end
-end, { noremap = true, silent = true })
 
 -- Append ; to end of line (if not already there) and return to normal mode
 vim.keymap.set({ "n", "i" }, "<C-;>", function()

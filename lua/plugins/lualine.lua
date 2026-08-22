@@ -29,6 +29,10 @@ require("lualine").setup({
 			-- 	end,
 			-- },
 			{
+				-- function()
+				-- 	local roto = require("roto-rooter")
+				-- 	return roto.reldir()
+				-- end,
 				function()
 					return vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
 				end,
