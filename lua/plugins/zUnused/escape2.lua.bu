@@ -1,0 +1,223 @@
+-- Minimal escape-hatch repro — FULL smart_close pipeline
+--
+-- Drop in ~/.config/nvim/plugin/ and disable escape-hatch.nvim.
+-- Requires: require('vim._core.ui2').enable({}) in your config.
+--
+-- Usage:
+--   Open a file via Telescope
+--   Move off line 1, enter insert, type something, leave insert
+--   Hit F5 then F6 as fast as you can
+--
+-- F5 = smart_close (first escape)
+-- F6 = smart_save  (second escape — the write)
+-- F7 = 50 automated F5+F6 pairs, reports failure count
+--
+-- NOTE: no nvim_echo workaround here on purpose — that's what we're testing.
+
+local CLOSE_ALL_SPECIAL_BUFFERS = false -- match your escape-hatch config
+local EXIT_TERMINAL = "<C-\\><C-n>"
+
+local preserve_patterns = {
+	"tutor",
+	"lualine",
+	"neo%-tree",
+	"nvim%-tree",
+	"alpha",
+	"dashboard",
+	"trouble",
+	"which%-key",
+}
+
+-- ---------------------------------------------------------------------------
+-- helpers
+-- ---------------------------------------------------------------------------
+
+local function preserve_buffer(buf_name, buf_type)
+	for _, pattern in ipairs(preserve_patterns) do
+		local ok1, match1 = pcall(string.match, buf_name, pattern)
+		local ok2, match2 = pcall(string.match, buf_type, pattern)
+		if (ok1 and match1) or (ok2 and match2) then
+			return true
+		end
+	end
+	return false
+end
+
+local function telescope_close_any()
+	if not package.loaded["telescope"] then
+		return false
+	end
+	local ok_actions, actions = pcall(require, "telescope.actions")
+	local ok_state, action_state = pcall(require, "telescope.actions.state")
+	if not (ok_actions and ok_state) then
+		return false
+	end
+
+	local prompt_bufnr
+	for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+		if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].filetype == "TelescopePrompt" then
+			prompt_bufnr = buf
+			break
+		end
+	end
+	if not prompt_bufnr then
+		return false
+	end
+
+	local picker = action_state.get_current_picker(prompt_bufnr)
+	if not picker then
+		return false
+	end
+
+	-- deferred: this async work may still be in flight when F6 lands
+	--vim.schedule(function()
+	actions.close(picker.prompt_bufnr)
+	--end)
+	return true
+end
+
+local function close_floating_windows()
+	local closed = false
+	for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+		if vim.api.nvim_win_get_config(win).relative ~= "" then
+			local buf = vim.api.nvim_win_get_buf(win)
+			if not preserve_buffer(vim.api.nvim_buf_get_name(buf), vim.bo[buf].filetype) then
+				vim.api.nvim_win_close(win, true)
+				closed = true
+			end
+		end
+	end
+	return closed
+end
+
+local function handle_terminal()
+	if vim.bo.buftype ~= "terminal" then
+		return false
+	end
+	local mode = vim.fn.mode()
+	if mode == "n" or EXIT_TERMINAL == "hide" or EXIT_TERMINAL == "close" then
+		if #vim.api.nvim_tabpage_list_wins(0) > 1 then
+			if EXIT_TERMINAL == "hide" then
+				vim.cmd.hide()
+			else
+				vim.cmd.close()
+			end
+		else
+			vim.cmd("b#")
+		end
+	end
+	return true
+end
+
+local function close_special_buffers(buftype)
+	local closed = false
+	if CLOSE_ALL_SPECIAL_BUFFERS then
+		for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+			local bt = vim.bo[buf].buftype
+			if vim.api.nvim_buf_is_loaded(buf) and bt ~= "" and bt ~= "terminal" then
+				if not preserve_buffer(vim.api.nvim_buf_get_name(buf), bt) then
+					vim.api.nvim_buf_delete(buf, { force = true })
+					closed = true
+				end
+			end
+		end
+	elseif buftype ~= "" and buftype ~= "terminal" then
+		if not preserve_buffer(vim.api.nvim_buf_get_name(0), buftype) then
+			vim.api.nvim_buf_delete(0, { force = true })
+			closed = true
+		end
+	end
+	return closed
+end
+
+-- ---------------------------------------------------------------------------
+-- F5: full smart_close
+-- ---------------------------------------------------------------------------
+
+local function smart_close()
+	local mode = vim.fn.mode()
+	local buftype = vim.bo.buftype
+
+	if mode == "c" then
+		return true
+	end
+	if telescope_close_any() then
+		return true
+	end
+
+	local closed = close_floating_windows()
+
+	if handle_terminal() then
+		return true
+	end
+	if mode == "v" or mode == "V" or mode == "\22" then
+		-- send_keys("<Esc>")
+		return true
+	elseif mode ~= "n" then
+		vim.cmd("stopinsert")
+		return true
+	end
+
+	closed = close_special_buffers(buftype) or closed
+	vim.cmd("nohlsearch")
+	return closed
+end
+
+vim.keymap.set("n", "<F5>", smart_close, { desc = "repro: smart_close" })
+
+-- ---------------------------------------------------------------------------
+-- F6: smart_save
+-- ---------------------------------------------------------------------------
+
+local function smart_save()
+	if vim.bo.buftype ~= "" then
+		return
+	end
+	if vim.api.nvim_buf_get_name(0) == "" then
+		return
+	end
+	vim.cmd("w")
+end
+
+vim.keymap.set("n", "<F6>", smart_save, { desc = "repro: smart_save" })
+
+-- ---------------------------------------------------------------------------
+-- F7: 50 automated F5+F6 pairs
+-- Change DELAY_MS to 0 / 50 / 200 / 1000 to get a timing curve.
+-- Use a scratch copy of a file, not real work.
+-- ---------------------------------------------------------------------------
+
+local DELAY_MS = 0
+
+vim.keymap.set("n", "<F7>", function()
+	if vim.api.nvim_buf_get_name(0) == "" or vim.bo.buftype ~= "" then
+		return vim.notify("F7: need a normal named file buffer", vim.log.levels.WARN)
+	end
+
+	local fails, bad_names = 0, {}
+
+	local function attempt(n)
+		if n == 0 then
+			vim.notify(("F7 done: %d/50 failed at %dms\n%s"):format(
+				fails, DELAY_MS, vim.inspect(bad_names)))
+			return
+		end
+
+		smart_close()
+
+		vim.defer_fn(function()
+			vim.api.nvim_buf_set_lines(0, 0, 0, false, { "-- repro " .. n })
+			local before = vim.api.nvim_buf_get_name(0)
+			local ok = pcall(smart_save)
+			local after = vim.api.nvim_buf_get_name(0)
+			if not ok or after ~= before then
+				fails = fails + 1
+				bad_names[#bad_names + 1] = after
+			end
+			pcall(vim.cmd, "undo")
+			attempt(n - 1)
+		end, DELAY_MS)
+	end
+
+	attempt(50)
+end, { desc = "repro: 50 automated attempts" })

@@ -331,11 +331,8 @@ vim.keymap.set("n", "<leader>tb", toggle_boolean, {
 
 
 vim.keymap.set("n", "<leader>u", function()
-	-- local f = vim.fn.stdpath("state") .. "/restart-session.vim"
-	-- vim.cmd("wall")
-	-- vim.cmd("mksession! " .. vim.fn.fnameescape(f))
+	vim.cmd("update")
 	vim.pack.update(nil, { force = true })
-	-- vim.cmd("restart source " .. vim.fn.fnameescape(f))
 	vim.cmd("restart")
 end, { desc = "[U]pdate" })
 

@@ -11,10 +11,8 @@ require("escape-hatch").setup({
 		"tutor",
 		"lualine",
 	},
-	-- leader_commands = {
-	-- 	[1] = "delete_buffer", -- First escape: clear UI/exit modes
-	-- 	[2] = "quit_all", -- Second escape: save
-	-- 	[3] = "force_quit_all", -- Third escape: quit
+	-- normal_commands = {
+	-- 	[1] = "smart_close", -- First escape: clear UI/exit modes
 	-- },
 	-- Custom commands (optional)
 	commands = {

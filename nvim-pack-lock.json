@@ -1,7 +1,7 @@
 {
   "plugins": {
     "escape-hatch.nvim": {
-      "rev": "dc7ef2cfbc7c1765647dbb16a01cf0c45ce6e330",
+      "rev": "14a9e7e161422789bc24ddfd2d1bf66568d7d44c",
       "src": "https://github.com/sonictim/escape-hatch.nvim"
     },
     "fidget.nvim": {
@@ -25,7 +25,7 @@
       "src": "https://github.com/nvim-lualine/lualine.nvim"
     },
     "mini.nvim": {
-      "rev": "e58ad4b0c9e9376096b9704f98fc00d4c9448870",
+      "rev": "8d86a057fa14681cf7cab74ea7cba894a0abe14f",
       "src": "https://github.com/echasnovski/mini.nvim"
     },
     "nvim-autopairs": {
@@ -37,7 +37,7 @@
       "src": "https://github.com/brenoprata10/nvim-highlight-colors"
     },
     "nvim-treesitter": {
-      "rev": "074aa4422bf029908338e855d0c0f71470a971bb",
+      "rev": "e82ef6ae2c3eeb96c6916b29917f96bf630b2cdb",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter"
     },
     "nvim-treesitter-context": {

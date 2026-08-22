@@ -74,13 +74,13 @@ function _G.Statusline()
 
     local ft = vim.bo.filetype
     local icon = file_icon()
-    local ft_str = ft ~= "" and ("[" .. (icon ~= "" and icon .. " " or "") .. ft .. "]") or ""
+    local ft_str = ft ~= "" and ("[%#SLW#" .. (icon ~= "" and icon .. " " or "") .. "%#SLBr#" .. ft .. "%#SLDm#]") or ""
 
     return pill .. br .. diag
         .. "%#StatusLine# %f %m%r"
         .. "%="
-        .. "%#SLDm#󰉋 " .. cwd .. "  %{&encoding}  %{&fileformat}  " .. ft_str .. "  "
-        .. "%p%%  "
+        .. "%#SLBr#󰉋 " .. cwd .. "%#SLDm#  %{&encoding}  %{&fileformat}  " .. ft_str .. "  "
+        .. "%#StatusLine#%p%%  "
         .. hl .. " %l:%c "
 end
 
