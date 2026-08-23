@@ -1,6 +1,5 @@
 vim.pack.add({
 	"https://github.com/nvim-tree/nvim-web-devicons",
-
 	"https://github.com/NMAC427/guess-indent.nvim",
 	"https://github.com/folke/todo-comments.nvim",
 	"https://github.com/windwp/nvim-autopairs",
