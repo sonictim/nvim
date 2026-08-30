@@ -61,6 +61,7 @@ vim.keymap.set("n", "<leader>bX", ":!chmod +x %<CR>", { desc = "Make Buffer e[X]
 vim.keymap.set("n", "<leader>bq", "<cmd>Telescope quickfix<CR>", { desc = "[Q]uickfix list" })
 vim.keymap.set("n", "<leader>bx", ":!%<CR>", { desc = "e[X]ecute Buffer" })
 vim.keymap.set("n", "<leader>br", function()
+	vim.cmd("update")
 	if not vim.b.runprg then
 		vim.notify("No run command configured", vim.log.levels.WARN)
 		return
@@ -366,9 +367,9 @@ vim.keymap.set({ "n", "i" }, "<C-;>", function()
 	if not trimmed:match(";$") then
 		vim.api.nvim_set_current_line(trimmed .. ";")
 	end
-	local row = vim.api.nvim_win_get_cursor(0)[1]
-	vim.api.nvim_win_set_cursor(0, { row, #vim.api.nvim_get_current_line() - 1 })
 	if vim.api.nvim_get_mode().mode == "i" then
-		vim.cmd("stopinsert")
+		local row = vim.api.nvim_win_get_cursor(0)[1]
+		vim.api.nvim_win_set_cursor(0, { row, #vim.api.nvim_get_current_line() - 0 })
+		-- vim.cmd("stopinsert")
 	end
 end, { noremap = true, silent = true })
