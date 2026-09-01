@@ -1,7 +1,14 @@
 vim.pack.add({ "https://github.com/folke/which-key.nvim" })
 
 require("which-key").setup({
-
+	triggers = {
+		{ "<auto>", mode = "nixsotc" },
+		{ "s",      mode = { "n", "v" } },
+	},
+	disable = {
+		ft = { "yazi" },
+		bt = { "terminal" },
+	},
 	timeout_ms = 500,
 	-- delay between pressing a key and opening which-key (milliseconds)
 	-- this setting is independent of vim.o.timeoutlen

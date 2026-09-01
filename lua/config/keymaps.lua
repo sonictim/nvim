@@ -338,7 +338,7 @@ vim.keymap.set("n", "<leader>u", function()
 end, { desc = "[U]pdate" })
 
 
-vim.keymap.set("i", "<C-space>", "<C-x><C-o>")
+vim.keymap.set("i", "<C-space>", "<C-x><C-o>", { desc = "check autocomplete again" })
 
 -- tab navigation
 vim.keymap.set("i", "<Tab>", function()
@@ -360,7 +360,6 @@ vim.keymap.set("i", "<C-p>", function()
 end, { expr = true, noremap = true })
 
 
--- Append ; to end of line (if not already there) and return to normal mode
 vim.keymap.set({ "n", "i" }, "<C-;>", function()
 	local line = vim.api.nvim_get_current_line()
 	local trimmed = line:match("^(.-)%s*$")
@@ -373,3 +372,7 @@ vim.keymap.set({ "n", "i" }, "<C-;>", function()
 		-- vim.cmd("stopinsert")
 	end
 end, { noremap = true, silent = true })
+
+
+
+vim.keymap.set("i", "<C-.>", ".{}")

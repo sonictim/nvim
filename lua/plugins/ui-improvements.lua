@@ -11,6 +11,7 @@ require('guess-indent').setup({})
 require('todo-comments').setup({ signs = false })
 require("nvim-highlight-colors").setup({})
 require('nvim-autopairs').setup({})
+-- require('roto-rooter').setup({})
 
 -- Add indentation guides even on blank lines
 -- See `:help ibl`

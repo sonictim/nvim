@@ -1,6 +1,5 @@
 vim.pack.add({
 	"https://github.com/folke/tokyonight.nvim",
-	"https://github.com/brenoprata10/nvim-highlight-colors",
 	-- "https://github.com/vague2k/vague.nvim",
 	-- "https://github.com/catppuccin/nvim",
 	-- "https://github.com/rebelot/kanagawa.nvim",
@@ -60,6 +59,3 @@ vim.cmd.colorscheme("tokyonight-night")
 -- vim.cmd.colorscheme("github_dark")
 -- vim.cmd.colorscheme("theme-template")
 -- vim.cmd.colorscheme("vesper")
-
--- CSS COLORS
-require("nvim-highlight-colors").setup({})

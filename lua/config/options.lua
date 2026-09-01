@@ -79,7 +79,8 @@ vim.opt.autoread = true
 
 vim.opt.winborder = "rounded"
 
-vim.opt.autochdir = true
+--attempt to change to the parent directory
+vim.opt.autochdir = false
 vim.opt.cmdheight = 0
 
 -- Built-in undotree (Neovim 0.12+)

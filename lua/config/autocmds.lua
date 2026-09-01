@@ -1,5 +1,10 @@
--- [[ Basic Autocommands ]]
---  See `:help lua-guide-autocommands`
+vim.pack.add({
+	"https://github.com/sonictim/roto-rooter.nvim",
+})
+
+require('roto-rooter').setup({
+	-- scope = "tab"
+})
 
 -- Highlight when yanking (copying) text
 vim.api.nvim_create_autocmd("TextYankPost", {

@@ -1,0 +1,127 @@
+vim.pack.add({
+  "https://github.com/tpope/vim-fugitive",
+  "https://github.com/lewis6991/gitsigns.nvim"
+})
+
+local function local_file_dir()
+  local file_dir = vim.fn.expand '%:p:h'
+  vim.cmd('lcd ' .. file_dir)
+end
+vim.keymap.set('n', '<leader>gs', function()
+  local_file_dir()
+  vim.cmd 'Git'
+end, { desc = 'Git status' })
+vim.keymap.set('n', '<leader>gP', function()
+  local_file_dir()
+
+  vim.ui.input({ prompt = 'Commit message: ' }, function(msg)
+    if msg and msg ~= '' then
+      vim.cmd 'Git add .'
+      vim.cmd('Git commit -m ' .. vim.fn.shellescape(msg))
+      vim.cmd 'Git push'
+    end
+  end)
+end, { desc = 'Git add, commit, push' })
+vim.keymap.set('n', '<leader>gc', function()
+  local_file_dir()
+  vim.ui.input({ prompt = 'Commit message: ' }, function(msg)
+    if msg and msg ~= '' then
+      vim.cmd('Git commit -m ' .. vim.fn.shellescape(msg))
+    end
+  end)
+end, { desc = 'Git commit' })
+vim.keymap.set('n', '<leader>gp', function()
+  local_file_dir()
+  vim.cmd 'Git push'
+end, { desc = 'Git push' })
+vim.keymap.set('n', '<leader>gl', function()
+  local_file_dir()
+  vim.cmd 'Git pull'
+end, { desc = 'Git pull' })
+vim.keymap.set('n', '<leader>gd', function()
+  local_file_dir()
+  vim.cmd 'Gvdiffsplit'
+end, { desc = 'Git diff' })
+vim.keymap.set('n', '<leader>ga', function()
+  local_file_dir()
+  vim.cmd 'Git add .'
+end, { desc = 'Git add' })
+vim.keymap.set('n', '<leader>gs', function()
+  vim.ui.input({ prompt = 'Switch Branch: ' }, function(msg)
+    if msg and msg ~= '' then
+      vim.cmd("Git switch " .. msg)
+      local exit_code = vim.v.shell_error
+
+      if exit_code ~= 0 then
+        -- Branch doesn't exist, create it
+        vim.cmd("Git switch -c " .. msg)
+        print("Created and switched to branch '" .. msg .. "'")
+      else
+        print("Switched to branch '" .. msg .. "'")
+      end
+
+      -- Refresh Fugitive so statusline updates
+      vim.cmd("Git")
+    end
+  end)
+end, { desc = 'Git switch branch' })
+
+
+
+
+
+-- Adds git related signs to the gutter, as well as utilities for managing changes
+
+
+require('gitsigns').setup({
+  on_attach = function(bufnr)
+    local gitsigns = require 'gitsigns'
+
+    local function map(mode, l, r, opts)
+      opts = opts or {}
+      opts.buffer = bufnr
+      vim.keymap.set(mode, l, r, opts)
+    end
+
+    -- Navigation
+    map('n', ']c', function()
+      if vim.wo.diff then
+        vim.cmd.normal { ']c', bang = true }
+      else
+        gitsigns.nav_hunk 'next'
+      end
+    end, { desc = 'Jump to next git [c]hange' })
+
+    map('n', '[c', function()
+      if vim.wo.diff then
+        vim.cmd.normal { '[c', bang = true }
+      else
+        gitsigns.nav_hunk 'prev'
+      end
+    end, { desc = 'Jump to previous git [c]hange' })
+
+    -- Actions
+    -- visual mode
+    map('v', '<leader>hs', function()
+      gitsigns.stage_hunk { vim.fn.line '.', vim.fn.line 'v' }
+    end, { desc = 'git [s]tage hunk' })
+    map('v', '<leader>hr', function()
+      gitsigns.reset_hunk { vim.fn.line '.', vim.fn.line 'v' }
+    end, { desc = 'git [r]eset hunk' })
+    -- normal mode
+    map('n', '<leader>hs', gitsigns.stage_hunk, { desc = 'git [s]tage hunk' })
+    map('n', '<leader>hr', gitsigns.reset_hunk, { desc = 'git [r]eset hunk' })
+    map('n', '<leader>hS', gitsigns.stage_buffer, { desc = 'git [S]tage buffer' })
+    map('n', '<leader>hu', gitsigns.stage_hunk, { desc = 'git [u]ndo stage hunk' })
+    map('n', '<leader>hR', gitsigns.reset_buffer, { desc = 'git [R]eset buffer' })
+    map('n', '<leader>hp', gitsigns.preview_hunk, { desc = 'git [p]review hunk' })
+    map('n', '<leader>hb', gitsigns.blame_line, { desc = 'git [b]lame line' })
+    map('n', '<leader>hd', gitsigns.diffthis, { desc = 'git [d]iff against index' })
+    map('n', '<leader>hD', function()
+      gitsigns.diffthis '@'
+    end, { desc = 'git [D]iff against last commit' })
+    -- Toggles
+    map('n', '<leader>tB', gitsigns.toggle_current_line_blame, { desc = '[T]oggle git show [b]lame line' })
+    map('n', '<leader>tD', gitsigns.preview_hunk_inline, { desc = '[T]oggle git show [D]eleted' })
+  end,
+})

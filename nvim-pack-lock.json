@@ -1,7 +1,7 @@
 {
   "plugins": {
     "escape-hatch.nvim": {
-      "rev": "14a9e7e161422789bc24ddfd2d1bf66568d7d44c",
+      "rev": "9d8758c696323ec3f22184cdc3bdceeff1658907",
       "src": "https://github.com/sonictim/escape-hatch.nvim"
     },
     "fidget.nvim": {
@@ -25,11 +25,11 @@
       "src": "https://github.com/nvim-lualine/lualine.nvim"
     },
     "mini.nvim": {
-      "rev": "8d86a057fa14681cf7cab74ea7cba894a0abe14f",
+      "rev": "a311ed247d527db9592bb434356badc705363746",
       "src": "https://github.com/echasnovski/mini.nvim"
     },
     "nvim-autopairs": {
-      "rev": "7b9923abad60b903ece7c52940e1321d39eccc79",
+      "rev": "430522f95fe4fb7c511ec64f8c1a90cc6a66c05c",
       "src": "https://github.com/windwp/nvim-autopairs"
     },
     "nvim-highlight-colors": {
@@ -37,7 +37,7 @@
       "src": "https://github.com/brenoprata10/nvim-highlight-colors"
     },
     "nvim-treesitter": {
-      "rev": "e82ef6ae2c3eeb96c6916b29917f96bf630b2cdb",
+      "rev": "19071296d3d643b48615ee574a20e8a03ac40872",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter"
     },
     "nvim-treesitter-context": {
@@ -49,7 +49,7 @@
       "src": "https://github.com/nvim-treesitter/nvim-treesitter-textobjects"
     },
     "nvim-web-devicons": {
-      "rev": "2ae6958df7ced50baac5035cec0c15799eedfbf7",
+      "rev": "5f032a85be210cd1c6ac98861eb3b187ff3bd5eb",
       "src": "https://github.com/nvim-tree/nvim-web-devicons"
     },
     "oil.nvim": {
@@ -61,7 +61,7 @@
       "src": "https://github.com/nvim-lua/plenary.nvim"
     },
     "roto-rooter.nvim": {
-      "rev": "cd9ee9d476dbe6270ce379fe7dd2413e01943f72",
+      "rev": "96f24acf96175e4d5b28c30b17adbadec93295de",
       "src": "https://github.com/sonictim/roto-rooter.nvim"
     },
     "telescope-fzf-native.nvim": {
@@ -94,7 +94,7 @@
     },
     "yazi.nvim": {
       "rev": "0e7dce1a936b92099180ff80cbf35eb7e8a5f660",
-      "src": "https://github.com/DreamMaoMao/yazi.nvim"
+      "src": "https://github.com/mikavilpas/yazi.nvim"
     }
   }
 }
